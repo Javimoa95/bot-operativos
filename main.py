@@ -370,6 +370,4 @@ async def borrarop(interaction: discord.Interaction, link: str):
         )
 
 
-BOT_TOKEN = "..."
-
 bot.run(BOT_TOKEN)
