@@ -16,7 +16,7 @@ class Sanciones(commands.Cog):
         nivel="Nivel de sanción (1,2,3...)",
         usuario="Usuario sancionado",
         motivo="Motivo de la sanción",
-        fecha="Fecha límite DD/MM HH:MM"
+        fecha="Fecha límite DD/MM"
     )
     async def sancion(
         self,
@@ -28,7 +28,7 @@ class Sanciones(commands.Cog):
     ):
 
         # ---- PERMISOS ----
-        member = interaction.guild.get_member(interaction.user.id)
+        member = await interaction.guild.fetch_member(interaction.user.id)
         if not any(r.id == ROL_SANCIONADOR_ID for r in member.roles):
             await interaction.response.send_message(
                 "⛔ No tienes permisos para usar este comando.",
@@ -38,23 +38,21 @@ class Sanciones(commands.Cog):
 
         await interaction.response.defer(ephemeral=True)
 
-        # ---- PARSEAR FECHA ----
+        # ---- PARSEAR FECHA SOLO DD/MM ----
         tz = pytz.timezone("Europe/Madrid")
         try:
-            dia, resto = fecha.split("/")
-            mes, hora = resto.split(" ")
-            h, m = hora.split(":")
+            dia, mes = map(int, fecha.split("/"))
 
-            ahora = datetime.now(tz)
-            anio = ahora.year
+            anio = datetime.now(tz).year
 
-            fecha_dt = datetime(anio, int(mes), int(dia), int(h), int(m))
+            # Hora automática 00:00
+            fecha_dt = datetime(anio, mes, dia, 0, 0)
             fecha_dt = tz.localize(fecha_dt)
 
             timestamp = int(fecha_dt.timestamp())
         except:
             await interaction.followup.send(
-                "Formato fecha incorrecto. Usa DD/MM HH:MM",
+                "Formato fecha incorrecto. Usa DD/MM",
                 ephemeral=True
             )
             return
@@ -64,7 +62,7 @@ class Sanciones(commands.Cog):
         mensaje = (
             f"**SANCION NIVEL {nivel} ARMAMENTISTICA :**\n\n"
             f"Tienes 1 aviso y debes de entregar: **{pistolas} pipas**\n\n"
-            f"**Fecha limite:** <t:{timestamp}:s>\n\n"
+            f"**Fecha limite:** <t:{timestamp}:d>\n\n"
             f"**Usuario sancionado:** {usuario.mention}\n\n"
             f"**Motivo:** {motivo}\n\n"
             f"Cualquier duda o fallo abre ticket.\n"
