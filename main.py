@@ -39,6 +39,12 @@ ROL_ADMIN_ID = 1345432524314251306  # <-- ID del rol que puede usar /operativo
 ROL_AVISO_ID = 1263582833218158652  # <-- ID del rol que se menciona siempre
 CANAL_LOGS_ID = 1205530911991406693
 
+
+async def load_cogs():
+    for file in os.listdir("./cogs"):
+        if file.endswith(".py"):
+            await bot.load_extension(f"cogs.{file[:-3]}")
+
 async def log_justificacion(interaction, operativo_id, motivo):
     canal_logs = interaction.guild.get_channel(CANAL_LOGS_ID)
     if not canal_logs:
