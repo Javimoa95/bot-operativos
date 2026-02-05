@@ -29,7 +29,7 @@ def conectar_sheet():
     )
 
     client = gspread.authorize(creds)
-    sheet = client.open("NOMBRE_TU_SHEET").sheet1
+    sheet = client.open("OperativosBot").sheet1
 
     return sheet
 
