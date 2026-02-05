@@ -23,7 +23,6 @@ from operativos_manager import (
     guardar_operativos,
     actualizar_contadores
 )
-
 sheet = conectar_sheet()
 print("📊 Conectado a Google Sheets")
 
@@ -257,13 +256,19 @@ class OperativoView(discord.ui.View):
 
 # -------- READY --------
 @bot.event
+async def setup_hook():
+    await load_cogs()
+
+@bot.event
 async def on_ready():
     guild = discord.Object(id=GUILD_ID)
 
     bot.tree.clear_commands(guild=guild)
     await bot.tree.sync(guild=guild)
     await bot.tree.sync()
+
     print(f"✅ Bot conectado como {bot.user}")
+    print(bot.tree.get_commands())
 
 # -------- SLASH --------
 @bot.tree.command(name="operativo", description="Crear operativo automático")
