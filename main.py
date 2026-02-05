@@ -35,7 +35,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 GUILD_ID = 1204813117108916304  # <-- ID de tu servidor
 
 ROL_OBJETIVO_ID = 1263582833218158652  # <-- PON AQUÍ EL ID DEL ROL
-ROL_ADMIN_ID = 1345431201711919214  # <-- ID del rol que puede usar /operativo
+ROL_ADMIN_ID = 1345432524314251306  # <-- ID del rol que puede usar /operativo
 ROL_AVISO_ID = 1263582833218158652  # <-- ID del rol que se menciona siempre
 CANAL_LOGS_ID = 1205530911991406693
 
