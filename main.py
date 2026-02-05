@@ -32,12 +32,12 @@ intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
-GUILD_ID = 1468766274908721418  # <-- ID de tu servidor
+GUILD_ID = 1204813117108916304  # <-- ID de tu servidor
 
-ROL_OBJETIVO_ID = 1468767072489312388  # <-- PON AQUÍ EL ID DEL ROL
-ROL_ADMIN_ID = 1468767048384647341  # <-- ID del rol que puede usar /operativo
-ROL_AVISO_ID = 1468767072489312388  # <-- ID del rol que se menciona siempre
-CANAL_LOGS_ID = 1468784053900546059
+ROL_OBJETIVO_ID = 1263582833218158652  # <-- PON AQUÍ EL ID DEL ROL
+ROL_ADMIN_ID = 1345431201711919214  # <-- ID del rol que puede usar /operativo
+ROL_AVISO_ID = 1263582833218158652  # <-- ID del rol que se menciona siempre
+CANAL_LOGS_ID = 1205530911991406693
 
 async def log_justificacion(interaction, operativo_id, motivo):
     canal_logs = interaction.guild.get_channel(CANAL_LOGS_ID)
