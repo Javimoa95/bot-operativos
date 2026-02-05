@@ -1,6 +1,11 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+import os
+import json
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
 SCOPE = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive"
@@ -10,12 +15,22 @@ CREDS_FILE = "operativosbot-8d6da3299e13.json"
 SHEET_NAME = "OperativosBot"
 
 def conectar_sheet():
-    creds = ServiceAccountCredentials.from_json_keyfile_name(
-        CREDS_FILE,
+    SCOPE = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    creds_json = os.getenv("GOOGLE_CREDS")
+    creds_dict = json.loads(creds_json)
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(
+        creds_dict,
         SCOPE
     )
+
     client = gspread.authorize(creds)
-    sheet = client.open(SHEET_NAME).sheet1
+    sheet = client.open("NOMBRE_TU_SHEET").sheet1
+
     return sheet
 
 def obtener_o_crear_fila(sheet, user_id, username):
