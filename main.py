@@ -83,6 +83,20 @@ async def editar_contadores_mensaje(interaction, op):
     si = op.get("si", 0)
     no = op.get("no", 0)
 
+    asistentes = op.get("asistentes", {})
+
+    lista_si = []
+    lista_no = []
+
+    for user_id, estado in asistentes.items():
+        if estado == "SI":
+            lista_si.append(f"<@{user_id}>")
+        elif estado == "NO":
+            lista_no.append(f"<@{user_id}>")
+
+    texto_si = "\n".join(lista_si) if lista_si else "Nadie"
+    texto_no = "\n".join(lista_no) if lista_no else "Nadie"
+
     canal = interaction.channel
     mensaje = await canal.fetch_message(op["mensaje_id"])
 
@@ -93,12 +107,14 @@ async def editar_contadores_mensaje(interaction, op):
 
     nuevo_texto = (
         texto_original.strip() +
-        f"\n\n**Asistencias en vivo**\nSI: {si}\nNO: {no}"
+        f"\n\n**Asistencias en vivo**\n"
+        f"SI: {si}\n"
+        f"NO: {no}\n\n"
+        f"**ASISTEN:**\n{texto_si}\n\n"
+        f"**NO ASISTEN:**\n{texto_no}"
     )
 
     await mensaje.edit(content=nuevo_texto)
-
-
 def crear_timestamps(fecha_str, hora_str):
     tz = pytz.timezone("Europe/Madrid")
 

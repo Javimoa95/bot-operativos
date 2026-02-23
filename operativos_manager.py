@@ -43,34 +43,31 @@ def borrar_operativo(mensaje_id):
         guardar_operativos(data)
         return True
     return False
-def actualizar_contadores(mensaje_id, user_id, nuevo_estado):
+def actualizar_contadores(mensaje_id, user_id, estado):
     data = leer_operativos()
     op = data.get(str(mensaje_id))
 
     if not op:
         return None
 
-    op.setdefault("si", 0)
-    op.setdefault("no", 0)
-    op.setdefault("usuarios", {})
+    if "asistentes" not in op:
+        op["asistentes"] = {}
 
-    user_id = str(user_id)
-    estado_anterior = op["usuarios"].get(user_id)
+    anterior = op["asistentes"].get(str(user_id))
 
-    if estado_anterior == nuevo_estado:
-        return op  # ya estaba igual
+    # Si cambia de estado
+    if anterior != estado:
+        if anterior == "SI":
+            op["si"] -= 1
+        elif anterior == "NO":
+            op["no"] -= 1
 
-    if estado_anterior == "SI":
-        op["si"] -= 1
-    elif estado_anterior == "NO":
-        op["no"] -= 1
+        if estado == "SI":
+            op["si"] += 1
+        elif estado == "NO":
+            op["no"] += 1
 
-    if nuevo_estado == "SI":
-        op["si"] += 1
-    elif nuevo_estado == "NO":
-        op["no"] += 1
-
-    op["usuarios"][user_id] = nuevo_estado
+        op["asistentes"][str(user_id)] = estado
 
     guardar_operativos(data)
-    return op  # 👈 IMPORTANTE
+    return op
