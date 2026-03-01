@@ -3,7 +3,7 @@ from discord.ext import commands, tasks
 from discord import app_commands
 from datetime import datetime, timedelta
 import pytz
-
+from discord.app_commands import Choice
 from .armamento_parser import parsear_mensaje
 from .armamento_manager import (
     insertar_log,
@@ -92,15 +92,24 @@ class Armamento(commands.Cog):
     @app_commands.command(name="armamento", description="Ver estadísticas de un usuario")
     @app_commands.describe(
         usuario="Usuario a consultar",
-        fecha="Fecha desde (DD/MM) opcional"
+        fecha="Fecha desde (DD/MM) opcional",
+        categoria="Filtrar por categoría"
     )
+    @app_commands.choices(categoria=[
+        Choice(name="🔫 Armas", value="armas"),
+        Choice(name="💣 Munición", value="municion"),
+        Choice(name="🛡 Equipamiento", value="equipamiento"),
+        Choice(name="🍔 Comida", value="comida"),
+        Choice(name="🌿 Drogas", value="drogas"),
+        Choice(name="📦 Otros", value="otros")
+    ])
     async def armamento(
         self,
         interaction: discord.Interaction,
         usuario: discord.Member,
-        fecha: str = None
-    ):
-
+        fecha: str = None,
+        categoria: Choice[str] = None
+    ):    
         await interaction.response.defer()
 
         timestamp_inicio = parsear_fecha(fecha) if fecha else inicio_semana_timestamp()
@@ -114,6 +123,9 @@ class Armamento(commands.Cog):
         stats = {}
 
         for row in logs:
+
+            if categoria and row["categoria"] != categoria.lower():
+                continue
             codigo = row["objeto_codigo"]
             nombre = row["objeto_nombre"]
             tipo = row["tipo"]
@@ -129,28 +141,66 @@ class Armamento(commands.Cog):
             stats[codigo][tipo] += cantidad
 
         embed = discord.Embed(
-            title=f"📊 Estadísticas de {usuario.display_name}",
-            color=discord.Color.blurple()
+            title=f"📊 Informe de Armamento",
+            description=f"👤 **Usuario:** {usuario.mention}",
+            color=discord.Color.blue()
         )
 
+        texto = ""
+        balance_total = 0
+
         for data in stats.values():
+
             balance = data["metido"] - data["sacado"]
+            balance_total += balance
 
             if data["metido"] == 0 and data["sacado"] == 0:
                 continue
 
-            embed.add_field(
-                name=data["nombre"],
-                value=(
-                    f"➕ Metido: {data['metido']}\n"
-                    f"➖ Sacado: {data['sacado']}\n"
-                    f"⚖ Balance: {balance}"
-                ),
-                inline=False
-            )
+            # Emoji según arma
+            nombre_lower = data["nombre"].lower()
 
-        await interaction.followup.send(embed=embed)
+            if "9mm" in nombre_lower:
+                emoji = "🔫"
+            elif "revolver" in nombre_lower:
+                emoji = "🔫"
+            elif "sns" in nombre_lower:
+                emoji = "💥"
+            elif "mk2" in nombre_lower:
+                emoji = "🚀"
+            elif "escopeta" in nombre_lower:
+                emoji = "💣"
+            elif "knife" in nombre_lower or "cuchillo" in nombre_lower:
+                emoji = "🔪"
+            else:
+                emoji = "🔹"
 
+            linea = f"{emoji} **{data['nombre']}**\n"
+
+            if data["metido"] > 0:
+                linea += f"➕ Metido: ✅ `{data['metido']}`  "
+
+            if data["sacado"] > 0:
+                linea += f"➖ Sacado: ❌ `{data['sacado']}`"
+
+            linea += "\n\n"
+
+            texto += linea
+
+        emoji_balance = "🟢" if balance_total >= 0 else "🔴"
+
+        texto += f"⚖ **Balance Neto:** {emoji_balance} `{balance_total}`"
+
+        embed.add_field(
+            name="📦 Movimientos de la Semana",
+            value=texto,
+            inline=False
+        )
+
+        embed.set_footer(text="The Demons • Sistema de Armamento")
+        embed.set_thumbnail(url=usuario.display_avatar.url)
+
+        await interaction.followup.send(embed=embed)        
     # ---------------- /RECUENTO ----------------
 
     @app_commands.command(name="recuento", description="Balance general de armas")
@@ -177,9 +227,9 @@ class Armamento(commands.Cog):
 
         for row in logs:
 
-            if row["categoria"] != "arma":
+            if not row["objeto_codigo"].startswith("WEAPON_"):
                 continue
-
+            
             user_id = row["user_id"]
             username = row["username"]
             tipo = row["tipo"]

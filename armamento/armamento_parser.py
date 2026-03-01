@@ -61,3 +61,23 @@ def detectar_categoria(codigo):
         return "accesorio"
 
     return "objeto"
+
+
+def obtener_categoria(objeto_codigo):
+
+    if objeto_codigo.startswith("WEAPON_"):
+        return "armas"
+
+    if objeto_codigo.startswith("ammo"):
+        return "municion"
+
+    if objeto_codigo in ["chaleco", "at_suppressor_light", "at_scope_holo", "at_flashlight"]:
+        return "equipamiento"
+
+    if objeto_codigo in ["water", "beer", "sandwich", "fingle_burger", "turron", "polvoron"]:
+        return "comida"
+
+    if objeto_codigo in ["weed_amnesia", "weed_amnesiapack", "weed_purplepack", "cocaina"]:
+        return "drogas"
+
+    return "otros"
