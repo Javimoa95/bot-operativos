@@ -101,3 +101,32 @@ def borrar_sancion(id_sancion):
     conn.commit()
     cursor.close()
     conn.close()
+
+def obtener_sancion(id_sancion):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM sanciones WHERE id_unico = %s",
+        (id_sancion,)
+    )
+
+    fila = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not fila:
+        return None
+
+    # Adaptar a diccionario según tu orden de columnas
+    return {
+        "id_unico": fila[0],
+        "user_id": fila[1],
+        "nivel": fila[2],
+        "motivo": fila[3],
+        "fecha_limite": fila[4],
+        "estado": fila[5],
+        "canal_id": fila[6],
+        "mensaje_sancion_id": fila[7]
+    }
