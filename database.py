@@ -1,18 +1,17 @@
-import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
-
 DATABASE_URL = os.getenv("DATABASE_URL")
 print("DATABASE_URL:", DATABASE_URL)
+import psycopg2
+import psycopg2.extras
+import os
+
 def conectar():
-    return psycopg2.connect(
-        DATABASE_URL,
-        sslmode="require"
-    )
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    conn.autocommit = False
+    return conn
 
 def inicializar_db():
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ---- OPERATIVOS ----
     cursor.execute("""
