@@ -44,9 +44,13 @@ def inicializar_db():
         fecha_limite BIGINT,
         estado TEXT,
         canal_id BIGINT,
-        mensaje_sancion_id BIGINT
+        mensaje_privado_id BIGINT,
+        mensaje_sancion_id BIGINT,
+        contador_mensaje_id BIGINT
     )
     """)
+    cursor.execute("ALTER TABLE sanciones ADD COLUMN IF NOT EXISTS mensaje_privado_id BIGINT;")
+    cursor.execute("ALTER TABLE sanciones ADD COLUMN IF NOT EXISTS contador_mensaje_id BIGINT;")
     # ---- JUSTIFICACIONES ----
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS justificaciones (

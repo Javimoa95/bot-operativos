@@ -45,16 +45,18 @@ def crear_sancion(user_id, nivel, motivo, fecha_limite):
     return id_unico
 
 
-def actualizar_canal_sancion(id_sancion, canal_id, mensaje_publico_id):
+def actualizar_canal_sancion(id_sancion, canal_id, mensaje_privado_id, mensaje_publico_id, contador_mensaje_id):
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute("""
         UPDATE sanciones
         SET canal_id = %s,
-            mensaje_sancion_id = %s
+            mensaje_privado_id = %s,
+            mensaje_sancion_id = %s,
+            contador_mensaje_id = %s
         WHERE id_unico = %s
-    """, (canal_id, mensaje_publico_id, id_sancion))
+    """, (canal_id, mensaje_privado_id, mensaje_publico_id, contador_mensaje_id, id_sancion))
 
     conn.commit()
     cursor.close()
@@ -62,9 +64,6 @@ def actualizar_canal_sancion(id_sancion, canal_id, mensaje_publico_id):
 
 
 async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_mensaje):
-
-    CATEGORIA_SANCIONES_ID = 1477345672264159342
-    ROL_SANCIONADOR_ID = 1346520439433728060
 
     categoria = guild.get_channel(CATEGORIA_SANCIONES_ID)
     rol_sancionador = guild.get_role(ROL_SANCIONADOR_ID)
@@ -95,27 +94,14 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
 
     await mensaje_principal.pin()
 
-    # ⏳ CONTADOR
+    # ⏳ CONTADOR (siempre último mensaje)
     contador = await canal.send(
         f"⏳ Fecha límite: <t:{timestamp}:F>\n"
         f"Tiempo restante: <t:{timestamp}:R>"
     )
 
-    # ⚠️ IMPORTANTE: devolver TODO
     return canal.id, mensaje_principal.id, contador.id
 
-def borrar_sancion(id_sancion):
-    conn = conectar()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "DELETE FROM sanciones WHERE id_unico = %s",
-        (id_sancion,)
-    )
-
-    conn.commit()
-    cursor.close()
-    conn.close()
 
 def obtener_sancion(id_sancion):
     conn = conectar()
@@ -127,6 +113,7 @@ def obtener_sancion(id_sancion):
     )
 
     fila = cursor.fetchone()
+    columnas = [desc[0] for desc in cursor.description] if cursor.description else []
 
     cursor.close()
     conn.close()
@@ -134,17 +121,29 @@ def obtener_sancion(id_sancion):
     if not fila:
         return None
 
-    # Adaptar a diccionario según tu orden de columnas
-    return {
-        "id_unico": fila[0],
-        "user_id": fila[1],
-        "nivel": fila[2],
-        "motivo": fila[3],
-        "fecha_limite": fila[4],
-        "estado": fila[5],
-        "canal_id": fila[6],
-        "mensaje_sancion_id": fila[7]
-    }
+    return dict(zip(columnas, fila))
+
+
+def obtener_sancion_por_canal(canal_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM sanciones WHERE canal_id = %s",
+        (canal_id,)
+    )
+
+    fila = cursor.fetchone()
+    columnas = [desc[0] for desc in cursor.description] if cursor.description else []
+
+    cursor.close()
+    conn.close()
+
+    if not fila:
+        return None
+
+    return dict(zip(columnas, fila))
+
 
 def actualizar_contador_mensaje(id_sancion, mensaje_id):
     conn = conectar()
@@ -155,6 +154,20 @@ def actualizar_contador_mensaje(id_sancion, mensaje_id):
         SET contador_mensaje_id = %s
         WHERE id_unico = %s
     """, (mensaje_id, id_sancion))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def borrar_sancion(id_sancion):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM sanciones WHERE id_unico = %s",
+        (id_sancion,)
+    )
 
     conn.commit()
     cursor.close()
