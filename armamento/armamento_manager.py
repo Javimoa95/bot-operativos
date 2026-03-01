@@ -39,8 +39,8 @@ def obtener_logs_usuario(user_id, timestamp_inicio):
 
     cursor.execute("""
         SELECT * FROM armamento_logs
-        WHERE user_id = ?
-        AND timestamp >= ?
+        WHERE user_id = %s
+        AND timestamp >= %s
     """, (user_id, timestamp_inicio))
 
     rows = cursor.fetchall()
@@ -55,7 +55,7 @@ def obtener_logs_desde(timestamp_inicio):
 
     cursor.execute("""
         SELECT * FROM armamento_logs
-        WHERE timestamp >= ?
+        WHERE timestamp >= %s
     """, (timestamp_inicio,))
 
     rows = cursor.fetchall()

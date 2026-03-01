@@ -35,7 +35,7 @@ def obtener_ultima_semana_exportada():
     conn.close()
 
     if row:
-        return row["ultima_semana"]
+        return row[0]
     return None
 
 def actualizar_semana_exportada(semana):
