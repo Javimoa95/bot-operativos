@@ -124,7 +124,7 @@ class Armamento(commands.Cog):
 
         for row in logs:
 
-            if categoria and row["categoria"] != categoria.lower():
+            if categoria and row["categoria"] != categoria.value:
                 continue
             codigo = row["objeto_codigo"]
             nombre = row["objeto_nombre"]
