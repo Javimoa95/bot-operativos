@@ -166,17 +166,4 @@ def obtener_sancion_por_canal(canal_id):
     cursor.close()
     conn.close()
 
-    if not fila:
-        return None
-
-    return {
-        "id_unico": fila[0],
-        "user_id": fila[1],
-        "nivel": fila[2],
-        "motivo": fila[3],
-        "fecha_limite": fila[4],
-        "estado": fila[5],
-        "canal_id": fila[6],
-        "mensaje_sancion_id": fila[7],
-        "contador_mensaje_id": fila[8],
-    }
+    return fila  # YA es un diccionario
