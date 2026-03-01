@@ -31,17 +31,16 @@ def insertar_log(data):
     conn.commit()
     conn.close()
 
-def obtener_logs_usuario(username, timestamp_inicio):
-
+def obtener_logs_usuario(user_id, timestamp_inicio):
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute("""
         SELECT * FROM armamento_logs
-        WHERE LOWER(username) = LOWER(%s)
+        WHERE user_id = %s
         AND timestamp >= %s
         ORDER BY timestamp ASC
-    """, (username, timestamp_inicio))
+    """, (user_id, timestamp_inicio))
 
     rows = cursor.fetchall()
     conn.close()
