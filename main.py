@@ -581,13 +581,13 @@ async def on_message(message):
     ultimo_update_contador[canal_id] = ahora
 
     id_sancion = sancion["id_unico"]
-    contador_id = sancion["contador_mensaje_id"]
+    contador_id = sancion.get("contador_mensaje_id")
     fecha_limite = sancion["fecha_limite"]
 
-    # Borrar contador anterior
+    # Borrar contador anterior si existe
     if contador_id:
         try:
-            viejo = await message.channel.fetch_message(contador_id)
+            viejo = await message.channel.fetch_message(int(contador_id))
             await viejo.delete()
         except:
             pass
@@ -601,5 +601,6 @@ async def on_message(message):
     actualizar_contador_mensaje(id_sancion, nuevo.id)
 
     await bot.process_commands(message)
+
 ultimo_update_contador = {}
 bot.run(BOT_TOKEN)
