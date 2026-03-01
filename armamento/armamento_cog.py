@@ -210,7 +210,7 @@ class Armamento(commands.Cog):
         interaction: discord.Interaction,
         fecha: str = None
     ):
-
+        print(row["categoria"])
         await interaction.response.defer()
 
         timestamp_inicio = parsear_fecha(fecha) if fecha else inicio_semana_timestamp()
@@ -241,23 +241,25 @@ class Armamento(commands.Cog):
                 }
 
             usuarios[user_id][tipo] += cantidad
-
+        if not texto.strip():
+            embed.description = "⚠ No hay movimientos en esta categoría."
         embed = discord.Embed(
-            title="📈 Recuento de armas",
+            title="📈 Recuento Global de Armas",
             color=discord.Color.red()
         )
 
-        for data in usuarios.values():
-            balance = data["metido"] - data["sacado"]
+        if not usuarios:
+            embed.description = "⚠ No hay movimientos de armas esta semana."
+        else:
+            texto = ""
+            for data in usuarios.values():
+                balance = data["metido"] - data["sacado"]
+                emoji = "🟢" if balance >= 0 else "🔴"
+                texto += f"👤 **{data['username']}** → ⚖ {emoji} `{balance}`\n"
 
-            embed.add_field(
-                name=data["username"],
-                value=f"⚖ Balance: {balance}",
-                inline=False
-            )
+            embed.description = texto
 
         await interaction.followup.send(embed=embed)
-
     # ---------------- EXPORTACIÓN SEMANAL ----------------
 
     @tasks.loop(minutes=1)
