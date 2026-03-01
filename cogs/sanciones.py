@@ -147,13 +147,19 @@ class Sanciones(commands.Cog):
 
         # ---- BORRAR CANAL PRIVADO ----
         if canal_id:
-            canal = self.bot.get_channel(canal_id)
+            try:
+                canal = await self.bot.fetch_channel(canal_id)
+            except:
+                canal = None
             if canal:
                 await canal.delete()
 
         # ---- BORRAR MENSAJE PUBLICO ----
         if mensaje_publico_id:
-            canal_sanciones = self.bot.get_channel(CANAL_SANCIONES_ID)
+            try:
+                canal_sanciones = await self.bot.fetch_channel(CANAL_SANCIONES_ID)
+            except:
+                canal_sanciones = None
             if canal_sanciones:
                 try:
                     mensaje = await canal_sanciones.fetch_message(mensaje_publico_id)
