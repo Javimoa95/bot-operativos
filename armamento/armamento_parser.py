@@ -1,9 +1,18 @@
 import re
 import discord
+import unicodedata
 
 pattern = re.compile(
     r"ha (metido|sacado) x([\d\.]+) (.+?) \((.+?)\).*?'(.+?)'"
 )
+
+
+def normalizar(texto: str) -> str:
+    """
+    Convierte texto Unicode raro (ᴢʏʀᴏxx) a formato normal (zyroxx)
+    """
+    return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii").lower()
+
 
 def parsear_mensaje(message):
 
@@ -28,10 +37,14 @@ def parsear_mensaje(message):
             return None
 
         nombre_mencion = match_usuario.group(1)
+        nombre_norm = normalizar(nombre_mencion)
 
-        # Buscar miembro en el servidor
+        # Buscar miembro en el servidor por display_name o username
         usuario = discord.utils.find(
-            lambda m: nombre_mencion.lower() in m.display_name.lower(),
+            lambda m: (
+                nombre_norm in normalizar(m.display_name)
+                or nombre_norm in normalizar(m.name)
+            ),
             message.guild.members
         )
 
