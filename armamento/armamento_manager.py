@@ -34,7 +34,7 @@ def insertar_log(data):
 def obtener_logs_usuario(user_id, timestamp_inicio):
 
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute("""
         SELECT * FROM armamento_logs
@@ -46,11 +46,10 @@ def obtener_logs_usuario(user_id, timestamp_inicio):
     conn.close()
     return rows
 
-
 def obtener_logs_desde(timestamp_inicio):
 
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute("""
         SELECT * FROM armamento_logs
