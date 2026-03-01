@@ -64,6 +64,17 @@ def actualizar_canal_sancion(id_sancion, canal_id, mensaje_privado_id, mensaje_p
 
 
 async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_mensaje):
+
+    categoria = guild.get_channel(CATEGORIA_SANCIONES_ID)
+    rol_sancionador = guild.get_role(ROL_SANCIONADOR_ID)
+
+    if not categoria:
+        raise Exception("Categoría de sanciones no encontrada")
+
+    if not rol_sancionador:
+        raise Exception("Rol sancionador no encontrado")
+
+    # Permisos correctos (incluyendo el BOT)
     overwrites = {
         guild.default_role: discord.PermissionOverwrite(view_channel=False),
         usuario: discord.PermissionOverwrite(view_channel=True, send_messages=True),
@@ -75,14 +86,6 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
             manage_messages=True
         )
     }
-    categoria = guild.get_channel(CATEGORIA_SANCIONES_ID)
-    rol_sancionador = guild.get_role(ROL_SANCIONADOR_ID)
-
-    overwrites = {
-        guild.default_role: discord.PermissionOverwrite(view_channel=False),
-        usuario: discord.PermissionOverwrite(view_channel=True, send_messages=True),
-        rol_sancionador: discord.PermissionOverwrite(view_channel=True, send_messages=True),
-    }
 
     canal = await guild.create_text_channel(
         name=f"sancion-{usuario.name.lower()}",
@@ -90,8 +93,8 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
         overwrites=overwrites
     )
 
-    # 🔔 MENCIÓN ROL Y BORRAR
-    aviso = await canal.send(f"{rol_sancionador.mention}")
+    # 🔔 MENCIÓN ROL Y BORRAR (solo notificación)
+    aviso = await canal.send(rol_sancionador.mention)
     await aviso.delete()
 
     # 📌 MENSAJE PRINCIPAL
@@ -111,7 +114,6 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
     )
 
     return canal.id, mensaje_principal.id, contador.id
-
 
 def obtener_sancion(id_sancion):
     conn = conectar()
