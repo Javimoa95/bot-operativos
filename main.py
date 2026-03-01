@@ -380,7 +380,7 @@ async def revisar_operativos():
 
                     link_mensaje = mensaje_publico.jump_url
 
-                    canal_id = await crear_canal_sancion(
+                    canal_id, mensaje_privado_id, contador_id = await crear_canal_sancion(
                         bot,
                         guild,
                         member,
@@ -389,6 +389,13 @@ async def revisar_operativos():
                         link_mensaje
                     )
 
+                    actualizar_canal_sancion(
+                        id_sancion,
+                        canal_id,
+                        mensaje_privado_id,
+                        mensaje_publico.id,
+                        contador_id
+                    )
                     actualizar_canal_sancion(
                         id_sancion,
                         canal_id,
