@@ -302,6 +302,7 @@ async def on_ready():
     bot.tree.clear_commands(guild=guild)
     await bot.tree.sync(guild=guild)
     await bot.tree.sync()
+    bot.add_view(OperativoView())
 
     print(f"✅ Bot conectado como {bot.user}")
     print(bot.tree.get_commands())
