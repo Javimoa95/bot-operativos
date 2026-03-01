@@ -119,7 +119,8 @@ class Sanciones(commands.Cog):
         interaction: discord.Interaction,
         id_sancion: str
     ):
-
+        print("CANAL ID EN DB:", canal_id)
+        print("MENSAJE PUBLICO ID EN DB:", mensaje_publico_id)
         member = await interaction.guild.fetch_member(interaction.user.id)
 
         if not any(r.id == ROL_SANCIONADOR_ID for r in member.roles):
@@ -153,7 +154,9 @@ class Sanciones(commands.Cog):
                 canal = None
             if canal:
                 await canal.delete()
-
+                print("CANAL BORRADO")
+            else:
+                print("CANAL NO ENCONTRADO")
         # ---- BORRAR MENSAJE PUBLICO ----
         if mensaje_publico_id:
             try:

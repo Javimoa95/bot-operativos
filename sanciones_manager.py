@@ -64,7 +64,17 @@ def actualizar_canal_sancion(id_sancion, canal_id, mensaje_privado_id, mensaje_p
 
 
 async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_mensaje):
-
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(view_channel=False),
+        usuario: discord.PermissionOverwrite(view_channel=True, send_messages=True),
+        rol_sancionador: discord.PermissionOverwrite(view_channel=True, send_messages=True),
+        guild.me: discord.PermissionOverwrite(
+            view_channel=True,
+            send_messages=True,
+            manage_channels=True,
+            manage_messages=True
+        )
+    }
     categoria = guild.get_channel(CATEGORIA_SANCIONES_ID)
     rol_sancionador = guild.get_role(ROL_SANCIONADOR_ID)
 
