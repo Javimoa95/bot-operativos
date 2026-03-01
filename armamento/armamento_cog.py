@@ -212,6 +212,11 @@ class Armamento(commands.Cog):
         semana_actual = obtener_semana_actual()
         ultima = obtener_ultima_semana_exportada()
 
+        # Si nunca se ha guardado semana, solo guardar y salir
+        if ultima is None:
+            actualizar_semana_exportada(semana_actual)
+            return
+
         if ultima == semana_actual:
             return
 

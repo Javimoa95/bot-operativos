@@ -119,9 +119,10 @@ def mover_a_historial(semana):
             categoria, objeto_nombre, objeto_codigo,
             cantidad, almacen, timestamp, semana
         )
-        SELECT message_id, user_id, username, tipo,
-               categoria, objeto_nombre, objeto_codigo,
-               cantidad, almacen, timestamp, ?
+        SELECT 
+            message_id, user_id, username, tipo,
+            categoria, objeto_nombre, objeto_codigo,
+            cantidad, almacen, timestamp, %s
         FROM armamento_logs
     """, (semana,))
 
