@@ -48,7 +48,16 @@ def inicializar_db():
         mensaje_sancion_id BIGINT
     )
     """)
-
+    # ---- JUSTIFICACIONES ----
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS justificaciones (
+        operativo_id BIGINT,
+        user_id BIGINT,
+        mensaje_log_id BIGINT,
+        PRIMARY KEY (operativo_id, user_id)
+    )
+    """)
+    
     conn.commit()
     cursor.close()
     conn.close()

@@ -20,8 +20,6 @@ from operativos_manager import (
     agregar_operativo,
     obtener_operativo,
     borrar_operativo,
-    leer_operativos,
-    guardar_operativos,
     actualizar_contadores
 )
 sheet = conectar_sheet()
@@ -51,11 +49,19 @@ async def log_justificacion(interaction, operativo_id, motivo):
     if not canal_logs:
         return
 
-    data = leer_operativos()
-    op = data.get(str(operativo_id))
+    from operativos_manager import (
+        obtener_justificacion,
+        guardar_justificacion
+    )
 
-    user_id = str(interaction.user.id)
-    link_operativo = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{operativo_id}"
+    user_id = interaction.user.id
+
+    link_operativo = (
+        f"https://discord.com/channels/"
+        f"{interaction.guild.id}/"
+        f"{interaction.channel.id}/"
+        f"{operativo_id}"
+    )
 
     texto = (
         f"**Justificación de ausencia**\n"
@@ -64,21 +70,18 @@ async def log_justificacion(interaction, operativo_id, motivo):
         f"Motivo: {motivo}"
     )
 
-    if user_id in op["justificaciones"]:
-        # EDITAR
-        mensaje_id = op["justificaciones"][user_id]
-        try:
-            mensaje = await canal_logs.fetch_message(mensaje_id)
-            await mensaje.edit(content=texto)
-        except:
-            nuevo = await canal_logs.send(texto)
-            op["justificaciones"][user_id] = nuevo.id
-    else:
-        # CREAR
-        nuevo = await canal_logs.send(texto)
-        op["justificaciones"][user_id] = nuevo.id
+    mensaje_existente_id = obtener_justificacion(operativo_id, user_id)
 
-    guardar_operativos(data)
+    if mensaje_existente_id:
+        try:
+            mensaje = await canal_logs.fetch_message(mensaje_existente_id)
+            await mensaje.edit(content=texto)
+            return
+        except:
+            pass
+
+    nuevo = await canal_logs.send(texto)
+    guardar_justificacion(operativo_id, user_id, nuevo.id)
 
 
 async def editar_contadores_mensaje(interaction, op):
@@ -373,8 +376,6 @@ async def borrarop(interaction: discord.Interaction, link: str):
     partes = link.split("/")
     mensaje_id = int(partes[-1])
     
-    data = leer_operativos()
-    op = data.get(str(mensaje_id))
 
     # BORRAR MENSAJE
     try:

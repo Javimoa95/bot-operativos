@@ -1,73 +1,148 @@
-import json
-import os
-
-ARCHIVO = "operativos.json"
-
-def leer_operativos():
-    if not os.path.exists(ARCHIVO):
-        return {}
-
-    try:
-        with open(ARCHIVO, "r") as f:
-            contenido = f.read().strip()
-            if not contenido:
-                return {}
-            return json.loads(contenido)
-    except:
-        return {}
-
-def guardar_operativos(data):
-    with open(ARCHIVO, "w") as f:
-        json.dump(data, f, indent=4)
+from database import conectar
 
 def agregar_operativo(mensaje_id, timestamp, columna):
-    data = leer_operativos()
-    data[str(mensaje_id)] = {
-        "mensaje_id": mensaje_id,
-        "timestamp": timestamp,
-        "columna": columna,
-        "si": 0,
-        "no": 0,
-        "justificaciones": {}
-    }
-    guardar_operativos(data)
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO operativos (mensaje_id, timestamp, columna)
+        VALUES (%s, %s, %s)
+    """, (mensaje_id, timestamp, columna))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 
 def obtener_operativo(mensaje_id):
-    data = leer_operativos()
-    return data.get(str(mensaje_id))
+    conn = conectar()
+    cursor = conn.cursor()
 
-def borrar_operativo(mensaje_id):
-    data = leer_operativos()
-    if str(mensaje_id) in data:
-        del data[str(mensaje_id)]
-        guardar_operativos(data)
-        return True
-    return False
-def actualizar_contadores(mensaje_id, user_id, estado):
-    data = leer_operativos()
-    op = data.get(str(mensaje_id))
+    cursor.execute("""
+        SELECT * FROM operativos
+        WHERE mensaje_id = %s
+    """, (mensaje_id,))
 
-    if not op:
+    operativo = cursor.fetchone()
+
+    if not operativo:
+        cursor.close()
+        conn.close()
         return None
 
-    if "asistentes" not in op:
-        op["asistentes"] = {}
+    cursor.execute("""
+        SELECT user_id, estado
+        FROM asistentes
+        WHERE operativo_id = %s
+    """, (mensaje_id,))
 
-    anterior = op["asistentes"].get(str(user_id))
+    asistentes = cursor.fetchall()
 
-    # Si cambia de estado
-    if anterior != estado:
-        if anterior == "SI":
-            op["si"] -= 1
-        elif anterior == "NO":
-            op["no"] -= 1
+    cursor.close()
+    conn.close()
 
+    asistentes_dict = {}
+    si = 0
+    no = 0
+
+    for user_id, estado in asistentes:
+        asistentes_dict[str(user_id)] = estado
         if estado == "SI":
-            op["si"] += 1
+            si += 1
         elif estado == "NO":
-            op["no"] += 1
+            no += 1
 
-        op["asistentes"][str(user_id)] = estado
+    return {
+        "mensaje_id": mensaje_id,
+        "timestamp": operativo[1],
+        "columna": operativo[2],
+        "si": si,
+        "no": no,
+        "asistentes": asistentes_dict
+    }
 
-    guardar_operativos(data)
-    return op
+
+def actualizar_contadores(mensaje_id, user_id, estado):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT estado FROM asistentes
+        WHERE operativo_id = %s AND user_id = %s
+    """, (mensaje_id, user_id))
+
+    anterior = cursor.fetchone()
+
+    if anterior:
+        cursor.execute("""
+            UPDATE asistentes
+            SET estado = %s
+            WHERE operativo_id = %s AND user_id = %s
+        """, (estado, mensaje_id, user_id))
+    else:
+        cursor.execute("""
+            INSERT INTO asistentes (operativo_id, user_id, estado)
+            VALUES (%s, %s, %s)
+        """, (mensaje_id, user_id, estado))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return obtener_operativo(mensaje_id)
+
+
+def borrar_operativo(mensaje_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM asistentes
+        WHERE operativo_id = %s
+    """, (mensaje_id,))
+
+    cursor.execute("""
+        DELETE FROM operativos
+        WHERE mensaje_id = %s
+    """, (mensaje_id,))
+
+    eliminado = cursor.rowcount > 0
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return eliminado
+
+def obtener_justificacion(operativo_id, user_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT mensaje_log_id
+        FROM justificaciones
+        WHERE operativo_id = %s AND user_id = %s
+    """, (operativo_id, user_id))
+
+    resultado = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return resultado[0] if resultado else None
+
+
+def guardar_justificacion(operativo_id, user_id, mensaje_log_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO justificaciones (operativo_id, user_id, mensaje_log_id)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (operativo_id, user_id)
+        DO UPDATE SET mensaje_log_id = EXCLUDED.mensaje_log_id
+    """, (operativo_id, user_id, mensaje_log_id))
+
+    conn.commit()
+    cursor.close()
+    conn.close()

@@ -77,9 +77,33 @@ class Sanciones(commands.Cog):
                 ephemeral=True
             )
             return
+        from sanciones_manager import crear_sancion, crear_canal_sancion, actualizar_canal_sancion
 
-        await canal.send(mensaje)
+        id_sancion = crear_sancion(
+            usuario.id,
+            nivel,
+            motivo,
+            timestamp
+        )
 
+        mensaje_publico = await canal.send(mensaje)
+
+        link_mensaje = mensaje_publico.jump_url
+
+        canal_id = await crear_canal_sancion(
+            self.bot,
+            interaction.guild,
+            usuario,
+            id_sancion,
+            timestamp,
+            link_mensaje
+        )
+
+        actualizar_canal_sancion(
+            id_sancion,
+            canal_id,
+            mensaje_publico.id
+        )
         await interaction.followup.send(
             "✅ Sanción enviada correctamente.",
             ephemeral=True
