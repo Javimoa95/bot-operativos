@@ -12,7 +12,7 @@ def insertar_log(data):
                 categoria, objeto_nombre, objeto_codigo,
                 cantidad, almacen, timestamp
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data["message_id"],
             data["user_id"],
@@ -25,12 +25,13 @@ def insertar_log(data):
             data["almacen"],
             data["timestamp"]
         ))
+
         conn.commit()
+
     except Exception as e:
         print("ERROR INSERTANDO:", e)
-        
-    conn.close()
 
+    conn.close()
 
 def obtener_logs_usuario(user_id, timestamp_inicio):
 
