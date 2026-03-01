@@ -113,7 +113,7 @@ class Armamento(commands.Cog):
     async def armamento(
         self,
         interaction: discord.Interaction,
-        usuario: discord.Member,
+        usuario: discord.User,
         fecha: str = None,
         categoria: Choice[str] = None
     ):    
@@ -218,7 +218,7 @@ class Armamento(commands.Cog):
         )
 
         embed.description = (
-            f"👤 **Usuario:** {usuario.mention}\n"
+            f"👤 **Usuario:** {usuario.name}\n"
             f"📂 **Categoría:** {nombre_categoria}\n\n"
             f"{texto}"
         )
