@@ -108,6 +108,62 @@ class Sanciones(commands.Cog):
             "✅ Sanción enviada correctamente.",
             ephemeral=True
         )
+    @app_commands.command(name="borrarsancion", description="Borrar sanción")
+    @app_commands.describe(id_sancion="ID único de la sanción")
+    async def borrar_sancion_cmd(
+        self,
+        interaction: discord.Interaction,
+        id_sancion: str
+    ):
+
+        member = await interaction.guild.fetch_member(interaction.user.id)
+
+        if not any(r.id == ROL_SANCIONADOR_ID for r in member.roles):
+            await interaction.response.send_message(
+                "⛔ No tienes permisos.",
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        from sanciones_manager import obtener_sancion, borrar_sancion
+
+        sancion = obtener_sancion(id_sancion)
+
+        if not sancion:
+            await interaction.followup.send(
+                "❌ Sanción no encontrada.",
+                ephemeral=True
+            )
+            return
+
+        canal_id = sancion["canal_id"]
+        mensaje_publico_id = sancion["mensaje_sancion_id"]
+
+        # ---- BORRAR CANAL PRIVADO ----
+        if canal_id:
+            canal = self.bot.get_channel(canal_id)
+            if canal:
+                await canal.delete()
+
+        # ---- BORRAR MENSAJE PUBLICO ----
+        if mensaje_publico_id:
+            canal_sanciones = self.bot.get_channel(CANAL_SANCIONES_ID)
+            if canal_sanciones:
+                try:
+                    mensaje = await canal_sanciones.fetch_message(mensaje_publico_id)
+                    await mensaje.delete()
+                except:
+                    pass
+
+        # ---- BORRAR DE DB ----
+        borrar_sancion(id_sancion)
+
+        await interaction.followup.send(
+            f"🗑 Sanción `{id_sancion}` eliminada correctamente.",
+            ephemeral=True
+        )
 
 
 async def setup(bot):

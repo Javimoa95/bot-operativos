@@ -88,3 +88,16 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
     )
 
     return canal.id
+
+def borrar_sancion(id_sancion):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM sanciones WHERE id_unico = %s",
+        (id_sancion,)
+    )
+
+    conn.commit()
+    cursor.close()
+    conn.close()
