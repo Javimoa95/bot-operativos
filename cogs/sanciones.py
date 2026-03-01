@@ -119,8 +119,7 @@ class Sanciones(commands.Cog):
         interaction: discord.Interaction,
         id_sancion: str
     ):
-        print("CANAL ID EN DB:", canal_id)
-        print("MENSAJE PUBLICO ID EN DB:", mensaje_publico_id)
+
         member = await interaction.guild.fetch_member(interaction.user.id)
 
         if not any(r.id == ROL_SANCIONADOR_ID for r in member.roles):
@@ -143,32 +142,30 @@ class Sanciones(commands.Cog):
             )
             return
 
-        canal_id = sancion["canal_id"]
-        mensaje_publico_id = sancion["mensaje_sancion_id"]
+        canal_id = sancion.get("canal_id")
+        mensaje_publico_id = sancion.get("mensaje_sancion_id")
+
+        print("CANAL ID EN DB:", canal_id)
+        print("MENSAJE PUBLICO ID EN DB:", mensaje_publico_id)
 
         # ---- BORRAR CANAL PRIVADO ----
         if canal_id:
             try:
-                canal = await self.bot.fetch_channel(canal_id)
-            except:
-                canal = None
-            if canal:
+                canal = await self.bot.fetch_channel(int(canal_id))
                 await canal.delete()
                 print("CANAL BORRADO")
-            else:
-                print("CANAL NO ENCONTRADO")
+            except Exception as e:
+                print("ERROR BORRANDO CANAL:", e)
+
         # ---- BORRAR MENSAJE PUBLICO ----
         if mensaje_publico_id:
             try:
                 canal_sanciones = await self.bot.fetch_channel(CANAL_SANCIONES_ID)
-            except:
-                canal_sanciones = None
-            if canal_sanciones:
-                try:
-                    mensaje = await canal_sanciones.fetch_message(mensaje_publico_id)
-                    await mensaje.delete()
-                except:
-                    pass
+                mensaje = await canal_sanciones.fetch_message(int(mensaje_publico_id))
+                await mensaje.delete()
+                print("MENSAJE PUBLICO BORRADO")
+            except Exception as e:
+                print("ERROR BORRANDO MENSAJE:", e)
 
         # ---- BORRAR DE DB ----
         borrar_sancion(id_sancion)
@@ -177,7 +174,6 @@ class Sanciones(commands.Cog):
             f"🗑 Sanción `{id_sancion}` eliminada correctamente.",
             ephemeral=True
         )
-
 
 async def setup(bot):
     await bot.add_cog(Sanciones(bot))
