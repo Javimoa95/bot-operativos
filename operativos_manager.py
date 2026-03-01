@@ -146,3 +146,50 @@ def guardar_justificacion(operativo_id, user_id, mensaje_log_id):
     conn.commit()
     cursor.close()
     conn.close()
+
+def obtener_operativos_pendientes():
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT mensaje_id, timestamp, columna, procesado, recordatorio_enviado
+        FROM operativos
+        WHERE procesado = FALSE
+    """)
+
+    operativos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return operativos
+
+
+def marcar_operativo_procesado(mensaje_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE operativos
+        SET procesado = TRUE
+        WHERE mensaje_id = %s
+    """, (mensaje_id,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def marcar_recordatorio_enviado(mensaje_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE operativos
+        SET recordatorio_enviado = TRUE
+        WHERE mensaje_id = %s
+    """, (mensaje_id,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()

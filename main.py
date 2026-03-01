@@ -1,6 +1,8 @@
 import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-
+from discord.ext import tasks
+import asyncio
+import time
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -20,8 +22,12 @@ from operativos_manager import (
     agregar_operativo,
     obtener_operativo,
     borrar_operativo,
-    actualizar_contadores
+    actualizar_contadores,
+    obtener_operativos_pendientes,
+    marcar_operativo_procesado,
+    marcar_recordatorio_enviado
 )
+
 sheet = conectar_sheet()
 print("📊 Conectado a Google Sheets")
 inicializar_db()
@@ -283,13 +289,135 @@ async def setup_hook():
 @bot.event
 async def on_ready():
     guild = discord.Object(id=GUILD_ID)
-
+    if not revisar_operativos.is_running():
+        revisar_operativos.start()
     bot.tree.clear_commands(guild=guild)
     await bot.tree.sync(guild=guild)
     await bot.tree.sync()
 
     print(f"✅ Bot conectado como {bot.user}")
     print(bot.tree.get_commands())
+
+
+@tasks.loop(seconds=60)
+async def revisar_operativos():
+
+    ahora = int(time.time())
+    operativos = obtener_operativos_pendientes()
+
+    guild = bot.get_guild(GUILD_ID)
+    if not guild:
+        return
+
+    rol = guild.get_role(ROL_OBJETIVO_ID)
+    if not rol:
+        return
+
+    for mensaje_id, timestamp, columna, procesado, recordatorio_enviado in operativos:
+
+        # ---- RECORDATORIO 2 HORAS ----
+        if not recordatorio_enviado:
+            tiempo_restante = timestamp - ahora
+
+            if 0 < tiempo_restante <= 7200:
+                op = obtener_operativo(mensaje_id)
+                asistentes = op.get("asistentes", {})
+
+                for member in rol.members:
+                    if str(member.id) not in asistentes:
+                        try:
+                            await member.send(
+                                "⏰ Recordatorio de operativo\n\n"
+                                "No has marcado asistencia todavía.\n\n"
+                                "Si no marcas, se generará sanción automática."
+                            )
+                        except:
+                            pass
+
+                marcar_recordatorio_enviado(mensaje_id)
+
+        # ---- CIERRE AUTOMÁTICO ----
+        if ahora >= timestamp:
+
+            op = obtener_operativo(mensaje_id)
+            asistentes = op.get("asistentes", {})
+
+            canal_publico = bot.get_channel(1220866157649727489)
+
+            for member in rol.members:
+                await asyncio.sleep(0.5)
+
+                if str(member.id) not in asistentes:
+
+                    from sanciones_manager import (
+                        crear_sancion,
+                        crear_canal_sancion,
+                        actualizar_canal_sancion
+                    )
+
+                    fecha_limite = ahora + (3 * 24 * 60 * 60)
+
+                    id_sancion = crear_sancion(
+                        member.id,
+                        5,
+                        "no marcar operativo",
+                        fecha_limite
+                    )
+
+                    mensaje_publico = await canal_publico.send(
+                        f"**SANCION NIVEL 5 ARMAMENTISTICA :**\n\n"
+                        f"Tienes 1 aviso y debes de entregar: **5 pipas**\n\n"
+                        f"**Fecha limite:** <t:{fecha_limite}:d>\n\n"
+                        f"**Usuario sancionado:** {member.mention}\n\n"
+                        f"**Motivo:** no marcar operativo\n\n"
+                        f"Cualquier duda o fallo abre ticket.\n"
+                        f"Si cumples la sancion abre ticket con las pruebas y tagueame."
+                    )
+
+                    link_mensaje = mensaje_publico.jump_url
+
+                    canal_id = await crear_canal_sancion(
+                        bot,
+                        guild,
+                        member,
+                        id_sancion,
+                        fecha_limite,
+                        link_mensaje
+                    )
+
+                    actualizar_canal_sancion(
+                        id_sancion,
+                        canal_id,
+                        mensaje_publico.id
+                    )
+
+            # ---- RESPUESTA FINAL ----
+            canal_operativo = guild.get_channel(mensaje_publico.channel.id)
+
+            try:
+                mensaje_operativo = await canal_operativo.fetch_message(mensaje_id)
+
+                no_marcaron = [
+                    member.mention
+                    for member in rol.members
+                    if str(member.id) not in asistentes
+                ]
+
+                if no_marcaron:
+                    texto = (
+                        "Operativo finalizado.\n\n"
+                        "No marcaron asistencia:\n" +
+                        "\n".join(no_marcaron)
+                    )
+                else:
+                    texto = "Operativo finalizado.\n\nTodos marcaron asistencia."
+
+                await mensaje_operativo.reply(texto)
+
+            except:
+                pass
+
+            marcar_operativo_procesado(mensaje_id)
 
 # -------- SLASH --------
 @bot.tree.command(name="operativo", description="Crear operativo automático")
