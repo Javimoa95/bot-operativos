@@ -1,36 +1,34 @@
+import psycopg2
+
 from database import conectar
 
 def insertar_log(data):
 
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    try:
-        cursor.execute("""
-            INSERT INTO armamento_logs (
-                message_id, user_id, username, tipo,
-                categoria, objeto_nombre, objeto_codigo,
-                cantidad, almacen, timestamp
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            data["message_id"],
-            data["user_id"],
-            data["username"],
-            data["tipo"],
-            data["categoria"],
-            data["objeto_nombre"],
-            data["objeto_codigo"],
-            data["cantidad"],
-            data["almacen"],
-            data["timestamp"]
-        ))
+    cursor.execute("""
+        INSERT INTO armamento_logs (
+            message_id, user_id, username, tipo,
+            categoria, objeto_nombre, objeto_codigo,
+            cantidad, almacen, timestamp
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (message_id) DO NOTHING
+    """, (
+        data["message_id"],
+        data["user_id"],
+        data["username"],
+        data["tipo"],
+        data["categoria"],
+        data["objeto_nombre"],
+        data["objeto_codigo"],
+        data["cantidad"],
+        data["almacen"],
+        data["timestamp"]
+    ))
 
-        conn.commit()
-
-    except Exception as e:
-        print("ERROR INSERTANDO:", e)
-
+    conn.commit()
     conn.close()
 
 def obtener_logs_usuario(user_id, timestamp_inicio):
