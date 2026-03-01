@@ -46,9 +46,17 @@ CANAL_LOGS_ID = 1205530911991406693
 
 
 async def load_cogs():
+
+    # Cargar cogs normales
     for file in os.listdir("./cogs"):
         if file.endswith(".py"):
             await bot.load_extension(f"cogs.{file[:-3]}")
+
+    # Cargar cogs de armamento
+    for file in os.listdir("./armamento"):
+        if file.endswith(".py") and file.endswith("_cog.py"):
+            await bot.load_extension(f"armamento.{file[:-3]}")
+
 
 async def log_justificacion(interaction, operativo_id, motivo):
     canal_logs = interaction.guild.get_channel(CANAL_LOGS_ID)
