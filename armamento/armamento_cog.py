@@ -79,15 +79,19 @@ class Armamento(commands.Cog):
             return
 
         async for message in canal.history(limit=50):
+            print("MENSAJE:", message.content)
+
             if message.webhook_id is None:
                 continue
 
             data = parsear_mensaje(message)
+
             if not data:
+                print("❌ NO PARSEADO")
                 continue
 
+            print("✅ PARSEADO:", data)
             insertar_log(data)
-
         print("✅ Recuperación completada")
 
     # ---------------- /ARMAMENTO ----------------
