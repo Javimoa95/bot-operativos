@@ -60,9 +60,9 @@ def inicializar_db():
     # ---- ARMAMENTO LOGS ACTUAL ----
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS armamento_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        message_id INTEGER UNIQUE,
-        user_id INTEGER,
+        id SERIAL PRIMARY KEY,
+        message_id BIGINT UNIQUE,
+        user_id BIGINT,
         username TEXT,
         tipo TEXT,
         categoria TEXT,
@@ -70,16 +70,15 @@ def inicializar_db():
         objeto_codigo TEXT,
         cantidad INTEGER,
         almacen TEXT,
-        timestamp INTEGER
+        timestamp BIGINT
     )
     """)
-
     # ---- ARMAMENTO HISTORIAL ----
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS armamento_logs_historial (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        message_id INTEGER,
-        user_id INTEGER,
+        id SERIAL PRIMARY KEY,
+        message_id BIGINT,
+        user_id BIGINT,
         username TEXT,
         tipo TEXT,
         categoria TEXT,
@@ -87,11 +86,10 @@ def inicializar_db():
         objeto_codigo TEXT,
         cantidad INTEGER,
         almacen TEXT,
-        timestamp INTEGER,
+        timestamp BIGINT,
         semana INTEGER
     )
     """)
-
     # ---- CONTROL SEMANA ARMAMENTO ----
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS armamento_control (
