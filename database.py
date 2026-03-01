@@ -44,7 +44,6 @@ def inicializar_db():
         fecha_limite BIGINT,
         estado TEXT,
         canal_id BIGINT,
-        mensaje_privado_id BIGINT,
         mensaje_sancion_id BIGINT,
         contador_mensaje_id BIGINT
     )

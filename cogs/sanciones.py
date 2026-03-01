@@ -100,15 +100,21 @@ class Sanciones(commands.Cog):
             link_mensaje
         )
 
-        # ---- GUARDAR IDS EN DB ----
+        from sanciones_manager import actualizar_contador_mensaje
+
+        # Guardar canal y mensaje público
         actualizar_canal_sancion(
             id_sancion,
             canal_id,
-            mensaje_privado_id,
-            mensaje_publico.id,
-            contador_id
+            mensaje_publico.id
         )
 
+        # Guardar contador
+        actualizar_contador_mensaje(
+            id_sancion,
+            contador_id
+        )    
+        
         await interaction.followup.send(
             "✅ Sanción enviada correctamente.",
             ephemeral=True
