@@ -369,6 +369,7 @@ async def revisar_operativos():
 
                     mensaje_publico = await canal_publico.send(
                         f"**SANCION NIVEL 5 ARMAMENTISTICA :**\n\n"
+                        f"**ID Sanción:** `{id_sancion}`\n\n"
                         f"Tienes 1 aviso y debes de entregar: **5 pipas**\n\n"
                         f"**Fecha limite:** <t:{fecha_limite}:d>\n\n"
                         f"**Usuario sancionado:** {member.mention}\n\n"

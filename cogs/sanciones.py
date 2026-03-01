@@ -61,6 +61,7 @@ class Sanciones(commands.Cog):
 
         mensaje = (
             f"**SANCION NIVEL {nivel} ARMAMENTISTICA :**\n\n"
+            f"ID Sanción: `{id_sancion}`\n\n"
             f"Tienes 1 aviso y debes de entregar: **{pistolas} pipas**\n\n"
             f"**Fecha limite:** <t:{timestamp}:d>\n\n"
             f"**Usuario sancionado:** {usuario.mention}\n\n"
