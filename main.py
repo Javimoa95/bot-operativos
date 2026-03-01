@@ -222,7 +222,7 @@ class OperativoView(discord.ui.View):
             await interaction.followup.send("⛔ Operativo inválido.", ephemeral=True)
             return
     
-        if time.time() > op["timestamp"]:
+        if int(time.time()) > int(op["timestamp"]):
             await interaction.followup.send("⛔ Operativo cerrado.", ephemeral=True)
             return
     
@@ -475,6 +475,28 @@ async def operativo(
         texto_operativo,
         view=OperativoView()
     )
+    # -----------------------------
+    # 📩 DM AUTOMÁTICO AL CREAR
+    # -----------------------------
+    guild = interaction.guild
+    rol = guild.get_role(ROL_OBJETIVO_ID)
+
+    link_operativo = mensaje_enviado.jump_url
+
+    for member in rol.members:
+        try:
+            await member.send(
+                f"📢 **Nuevo operativo creado**\n\n"
+                f"📅 Fecha: {fecha}\n"
+                f"🕒 Hora: <t:{ts_operativo}:t>\n\n"
+                f"📝 Descripción:\n{descripcion}\n\n"
+                f"🔗 Ir al operativo:\n{link_operativo}\n\n"
+                f"Marca asistencia cuanto antes.\n"
+                f"Si no marcas, se generará sanción automática."
+            )
+            await asyncio.sleep(0.3)
+        except:
+            pass  # DMs cerrados
     agregar_operativo(
         mensaje_enviado.id,
         ts_operativo,
@@ -503,7 +525,7 @@ async def borrarop(interaction: discord.Interaction, link: str):
 
     partes = link.split("/")
     mensaje_id = int(partes[-1])
-    
+    op = obtener_operativo(mensaje_id)
 
     # BORRAR MENSAJE
     try:
