@@ -1,7 +1,7 @@
 import re
 
 pattern = re.compile(
-    r"ha\s+(metido|sacado)\s+x([\d\.]+)\s+(.+?)\s+\(`(.+?)`\).*?'(.+?)'",
+    r"ha\s+(metido|sacado)\s+x([\d\.]+)\s+(.+?)\s+\(`(.+?)`\)\s+.*?'(.+?)'",
     re.IGNORECASE
 )
 
@@ -11,25 +11,25 @@ def parsear_mensaje(message):
     if not match:
         return None
 
-    tipo = match.group(1)
+    tipo = match.group(1).lower()
     cantidad = int(match.group(2).replace(".", ""))
     objeto_nombre = match.group(3).strip()
     objeto_codigo = match.group(4).strip()
     almacen = match.group(5).strip()
 
-    # 🔹 Extraer nombre dentro de (@Nombre)
-    match_usuario = re.search(r"\(@(.+?)\)", message.content)
-    if not match_usuario:
+    # 🔹 Extraer ID real del usuario desde <@123456789>
+    match_id = re.search(r"<@(\d+)>", message.content)
+    if not match_id:
         return None
 
-    nombre_usuario = match_usuario.group(1).strip()
+    user_id = int(match_id.group(1))
 
     categoria = detectar_categoria(objeto_codigo)
 
     return {
         "message_id": message.id,
-        "user_id": None,  
-        "username": nombre_usuario,
+        "user_id": user_id,
+        "username": None,  # ya no dependemos del nombre
         "tipo": tipo,
         "categoria": categoria,
         "objeto_nombre": objeto_nombre,

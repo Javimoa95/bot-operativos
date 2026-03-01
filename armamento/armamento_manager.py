@@ -46,6 +46,7 @@ def obtener_logs_usuario(username, timestamp_inicio):
     rows = cursor.fetchall()
     conn.close()
     return rows
+
 def obtener_logs_desde(timestamp_inicio):
 
     conn = conectar()
