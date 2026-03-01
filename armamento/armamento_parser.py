@@ -17,19 +17,26 @@ def parsear_mensaje(message):
     objeto_codigo = match.group(4).strip()
     almacen = match.group(5).strip()
 
-    # 🔹 Extraer ID real del usuario desde <@123456789>
+    # 🔹 Extraer ID real del usuario
     match_id = re.search(r"<@(\d+)>", message.content)
     if not match_id:
         return None
 
     user_id = int(match_id.group(1))
 
+    # 🔹 Extraer nombre del usuario entre **
+    match_nombre = re.search(r"\*\*(.+?)\*\*", message.content)
+    if match_nombre:
+        username = match_nombre.group(1).strip()
+    else:
+        username = None
+
     categoria = detectar_categoria(objeto_codigo)
 
     return {
         "message_id": message.id,
         "user_id": user_id,
-        "username": None,  # ya no dependemos del nombre
+        "username": username,
         "tipo": tipo,
         "categoria": categoria,
         "objeto_nombre": objeto_nombre,
@@ -38,7 +45,6 @@ def parsear_mensaje(message):
         "almacen": almacen,
         "timestamp": int(message.created_at.timestamp())
     }
-
 
 def detectar_categoria(codigo):
 
