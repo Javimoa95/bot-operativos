@@ -117,7 +117,7 @@ class Armamento(commands.Cog):
 
         timestamp_inicio = parsear_fecha(fecha) if fecha else inicio_semana_timestamp()
 
-        logs = obtener_logs_usuario(usuario.id, timestamp_inicio)
+        logs = obtener_logs_usuario(usuario.display_name, timestamp_inicio)
 
         if not logs:
             await interaction.followup.send("No hay datos para ese usuario.")

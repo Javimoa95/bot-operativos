@@ -1,17 +1,8 @@
 import re
-import discord
-import unicodedata
 
 pattern = re.compile(
     r"ha (metido|sacado) x([\d\.]+) (.+?) \((.+?)\).*?'(.+?)'"
 )
-
-
-def normalizar(texto: str) -> str:
-    """
-    Convierte texto Unicode raro (ᴢʏʀᴏxx) a formato normal (zyroxx)
-    """
-    return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii").lower()
 
 
 def parsear_mensaje(message):
@@ -26,37 +17,19 @@ def parsear_mensaje(message):
     objeto_codigo = match.group(4).strip()
     almacen = match.group(5).strip()
 
-    # 🔹 Intentar usar mención real primero
-    if message.mentions:
-        usuario = message.mentions[0]
+    # 🔹 Extraer nombre dentro de (@Nombre)
+    match_usuario = re.search(r"\(@(.+?)\)", message.content)
+    if not match_usuario:
+        return None
 
-    else:
-        # 🔹 Extraer nombre dentro de (@Nombre)
-        match_usuario = re.search(r"\(@(.+?)\)", message.content)
-        if not match_usuario:
-            return None
-
-        nombre_mencion = match_usuario.group(1)
-        nombre_norm = normalizar(nombre_mencion)
-
-        # Buscar miembro en el servidor por display_name o username
-        usuario = discord.utils.find(
-            lambda m: (
-                nombre_norm in normalizar(m.display_name)
-                or nombre_norm in normalizar(m.name)
-            ),
-            message.guild.members
-        )
-
-        if not usuario:
-            return None
+    nombre_usuario = match_usuario.group(1).strip()
 
     categoria = detectar_categoria(objeto_codigo)
 
     return {
         "message_id": message.id,
-        "user_id": usuario.id,
-        "username": usuario.display_name,
+        "user_id": None,  
+        "username": nombre_usuario,
         "tipo": tipo,
         "categoria": categoria,
         "objeto_nombre": objeto_nombre,

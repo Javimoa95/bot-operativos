@@ -31,21 +31,21 @@ def insertar_log(data):
     conn.commit()
     conn.close()
 
-def obtener_logs_usuario(user_id, timestamp_inicio):
+def obtener_logs_usuario(username, timestamp_inicio):
 
     conn = conectar()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor = conn.cursor()
 
     cursor.execute("""
         SELECT * FROM armamento_logs
-        WHERE user_id = %s
+        WHERE LOWER(username) = LOWER(%s)
         AND timestamp >= %s
-    """, (user_id, timestamp_inicio))
+        ORDER BY timestamp ASC
+    """, (username, timestamp_inicio))
 
     rows = cursor.fetchall()
     conn.close()
     return rows
-
 def obtener_logs_desde(timestamp_inicio):
 
     conn = conectar()
