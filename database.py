@@ -1,8 +1,8 @@
-DATABASE_URL = os.getenv("DATABASE_URL")
-print("DATABASE_URL:", DATABASE_URL)
 import psycopg2
 import psycopg2.extras
 import os
+DATABASE_URL = os.getenv("DATABASE_URL")
+print("DATABASE_URL:", DATABASE_URL)
 
 def conectar():
     conn = psycopg2.connect(os.getenv("DATABASE_URL"))
