@@ -1,13 +1,11 @@
 import re
+import discord
 
 pattern = re.compile(
     r"ha (metido|sacado) x([\d\.]+) (.+?) \((.+?)\).*?'(.+?)'"
 )
 
 def parsear_mensaje(message):
-
-    if not message.mentions:
-        return None
 
     match = pattern.search(message.content)
     if not match:
@@ -19,7 +17,26 @@ def parsear_mensaje(message):
     objeto_codigo = match.group(4).strip()
     almacen = match.group(5).strip()
 
-    usuario = message.mentions[0]
+    # 🔹 Intentar usar mención real primero
+    if message.mentions:
+        usuario = message.mentions[0]
+
+    else:
+        # 🔹 Extraer nombre dentro de (@Nombre)
+        match_usuario = re.search(r"\(@(.+?)\)", message.content)
+        if not match_usuario:
+            return None
+
+        nombre_mencion = match_usuario.group(1)
+
+        # Buscar miembro en el servidor
+        usuario = discord.utils.find(
+            lambda m: nombre_mencion.lower() in m.display_name.lower(),
+            message.guild.members
+        )
+
+        if not usuario:
+            return None
 
     categoria = detectar_categoria(objeto_codigo)
 

@@ -33,8 +33,8 @@ print("📊 Conectado a Google Sheets")
 inicializar_db()
 print("🗄 Base de datos inicializada")
 intents = discord.Intents.default()
-intents.message_content = True
 intents.members = True
+intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 GUILD_ID = 1204813117108916304  # <-- ID de tu servidor
