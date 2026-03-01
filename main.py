@@ -217,78 +217,72 @@ class OperativoView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @discord.ui.button(label="Asisto", style=discord.ButtonStyle.success)
+    @discord.ui.button(
+        label="Asisto",
+        style=discord.ButtonStyle.success,
+        custom_id="operativo_asisto"
+    )
     async def asistir(self, interaction: discord.Interaction, button: discord.ui.Button):
-    
+
         await interaction.response.defer(ephemeral=True)
-    
+
         import time
-    
-        op = obtener_operativo(interaction.message.id)  # ← AQUÍ VA
-    
+
+        op = obtener_operativo(interaction.message.id)
+
         if not op:
             await interaction.followup.send("⛔ Operativo inválido.", ephemeral=True)
             return
-    
+
         if int(time.time()) > int(op["timestamp"]):
             await interaction.followup.send("⛔ Operativo cerrado.", ephemeral=True)
             return
-    
+
         member = await interaction.guild.fetch_member(interaction.user.id)
-    
+
         if not any(rol.id == ROL_OBJETIVO_ID for rol in member.roles):
             await interaction.followup.send("⛔ No tienes el rol necesario.", ephemeral=True)
             return
-    
+
         fila = obtener_o_crear_fila(sheet, interaction.user.id, str(interaction.user))
-    
         columna = op["columna"]
         dia, hora = obtener_fecha_hora()
-    
+
         escribir_asistencia_operativo(sheet, fila, columna, "SI", hora)
         actualizar_total(sheet, fila)
-    
+
         op = actualizar_contadores(interaction.message.id, interaction.user.id, "SI")
         await editar_contadores_mensaje(interaction, op)
-    
+
         await interaction.followup.send("✔ Asistencia registrada", ephemeral=True)
-    @discord.ui.button(label="No asisto", style=discord.ButtonStyle.danger)
+
+    @discord.ui.button(
+        label="No asisto",
+        style=discord.ButtonStyle.danger,
+        custom_id="operativo_no_asisto"
+    )
     async def no_asistir(self, interaction: discord.Interaction, button: discord.ui.Button):
+
         import time
 
         op = obtener_operativo(interaction.message.id)
         member = await interaction.guild.fetch_member(interaction.user.id)
 
-
-        if not member:
-            await interaction.followup.send("Error obteniendo usuario.", ephemeral=True)
-            return
-
         if not op:
-            await interaction.response.send_message(
-                "⛔ Operativo inválido.",
-                ephemeral=True
-            )
+            await interaction.response.send_message("⛔ Operativo inválido.", ephemeral=True)
             return
 
-        if time.time() > op["timestamp"]:
-            await interaction.response.send_message(
-                "⛔ Operativo cerrado.",
-                ephemeral=True
-            )
+        if int(time.time()) > int(op["timestamp"]):
+            await interaction.response.send_message("⛔ Operativo cerrado.", ephemeral=True)
             return
-
 
         if not any(rol.id == ROL_OBJETIVO_ID for rol in member.roles):
-            await interaction.response.send_message(
-                "⛔ No tienes el rol necesario.",
-                ephemeral=True
-            )
+            await interaction.response.send_message("⛔ No tienes el rol necesario.", ephemeral=True)
             return
 
         modal = JustificacionModal(interaction.message.id)
         await interaction.response.send_modal(modal)
-
+        
 # -------- READY --------
 @bot.event
 async def setup_hook():

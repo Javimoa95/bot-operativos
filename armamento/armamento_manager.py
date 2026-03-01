@@ -26,9 +26,9 @@ def insertar_log(data):
             data["timestamp"]
         ))
         conn.commit()
-    except:
-        pass  # duplicado → ignorar
-
+    except Exception as e:
+        print("ERROR INSERTANDO:", e)
+        
     conn.close()
 
 

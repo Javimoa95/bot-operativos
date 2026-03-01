@@ -67,8 +67,12 @@ class Armamento(commands.Cog):
     # ---------------- RECUPERACIÓN AL INICIAR ----------------
 
     async def recuperar_ultimos_logs(self):
-        canal = self.bot.get_channel(CANAL_ARMAMENTO_LOGS_ID)
-        if not canal:
+        print("🔁 Recuperando últimos 50 logs...")
+
+        try:
+            canal = await self.bot.fetch_channel(CANAL_ARMAMENTO_LOGS_ID)
+        except Exception as e:
+            print("Error obteniendo canal:", e)
             return
 
         async for message in canal.history(limit=50):
@@ -80,6 +84,8 @@ class Armamento(commands.Cog):
                 continue
 
             insertar_log(data)
+
+        print("✅ Recuperación completada")
 
     # ---------------- /ARMAMENTO ----------------
 
