@@ -142,13 +142,28 @@ class Armamento(commands.Cog):
                 }
 
             stats[codigo][tipo] += cantidad
+        nombre_categoria = "Todas"
 
+        if categoria:
+            nombre_categoria = categoria.name  # Ej: "🔫 Armas"
+        
+        color_categoria = discord.Color.blue()
+        if categoria:
+            if categoria.value == "armas":
+                color_categoria = discord.Color.red()
+            elif categoria.value == "municion":
+                color_categoria = discord.Color.orange()
+            elif categoria.value == "equipamiento":
+                color_categoria = discord.Color.gold()
+            elif categoria.value == "comida":
+                color_categoria = discord.Color.green()
+            elif categoria.value == "drogas":
+                color_categoria = discord.Color.purple()
+                
         embed = discord.Embed(
-            title=f"📊 Informe de Armamento",
-            description=f"👤 **Usuario:** {usuario.mention}",
-            color=discord.Color.blue()
+            title="📊 Informe de Armamento",
+            color=color_categoria
         )
-
         texto = ""
         balance_total = 0
 
@@ -191,14 +206,23 @@ class Armamento(commands.Cog):
             texto += linea
 
         emoji_balance = "🟢" if balance_total >= 0 else "🔴"
+        texto += f"\n⚖ **Balance Neto:** {emoji_balance} `{balance_total}`"
 
-        texto += f"⚖ **Balance Neto:** {emoji_balance} `{balance_total}`"
+        embed = discord.Embed(
+            title="📊 Informe de Armamento",
+            color=color_categoria
+        )
 
-        embed.description = texto
+        embed.description = (
+            f"👤 **Usuario:** {usuario.mention}\n"
+            f"📂 **Categoría:** {nombre_categoria}\n\n"
+            f"{texto}"
+        )
+
         embed.set_footer(text="The Demons • Sistema de Armamento")
         embed.set_thumbnail(url=usuario.display_avatar.url)
 
-        await interaction.followup.send(embed=embed)        
+        await interaction.followup.send(embed=embed)
     # ---------------- /RECUENTO ----------------
 
     @app_commands.command(name="recuento", description="Balance general de armas")
@@ -210,7 +234,6 @@ class Armamento(commands.Cog):
         interaction: discord.Interaction,
         fecha: str = None
     ):
-        print(row["categoria"])
         await interaction.response.defer()
 
         timestamp_inicio = parsear_fecha(fecha) if fecha else inicio_semana_timestamp()
@@ -218,16 +241,17 @@ class Armamento(commands.Cog):
         logs = obtener_logs_desde(timestamp_inicio)
 
         if not logs:
-            await interaction.followup.send("No hay datos.")
+            await interaction.followup.send("⚠ No hay datos.")
             return
 
         usuarios = {}
 
         for row in logs:
 
+            # Detectar armas directamente por código
             if not row["objeto_codigo"].startswith("WEAPON_"):
                 continue
-            
+
             user_id = row["user_id"]
             username = row["username"]
             tipo = row["tipo"]
@@ -241,8 +265,7 @@ class Armamento(commands.Cog):
                 }
 
             usuarios[user_id][tipo] += cantidad
-        if not texto.strip():
-            embed.description = "⚠ No hay movimientos en esta categoría."
+
         embed = discord.Embed(
             title="📈 Recuento Global de Armas",
             color=discord.Color.red()
@@ -277,12 +300,11 @@ class Armamento(commands.Cog):
             return
         resultado = generar_json_semana()
 
-        # Si no hay datos de armas, no generar archivo
         if not resultado:
             actualizar_semana_exportada(semana_actual)
             return
-        nombre_archivo, semana = generar_json_semana()
 
+        nombre_archivo, semana = resultado
         canal = self.bot.get_channel(CANAL_EXPORTES_ARMAMENTO_ID)
 
         if canal:
