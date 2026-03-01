@@ -142,28 +142,27 @@ class Sanciones(commands.Cog):
             )
             return
 
+        # 🔎 DEBUG
+        print("SANCION DB:", sancion)
+
         canal_id = sancion.get("canal_id")
         mensaje_publico_id = sancion.get("mensaje_sancion_id")
-
-        print("CANAL ID EN DB:", canal_id)
-        print("MENSAJE PUBLICO ID EN DB:", mensaje_publico_id)
 
         # ---- BORRAR CANAL PRIVADO ----
         if canal_id:
             try:
                 canal = await self.bot.fetch_channel(int(canal_id))
                 await canal.delete()
-                print("CANAL BORRADO")
             except Exception as e:
                 print("ERROR BORRANDO CANAL:", e)
 
         # ---- BORRAR MENSAJE PUBLICO ----
         if mensaje_publico_id:
             try:
-                canal_sanciones = await self.bot.fetch_channel(CANAL_SANCIONES_ID)
-                mensaje = await canal_sanciones.fetch_message(int(mensaje_publico_id))
-                await mensaje.delete()
-                print("MENSAJE PUBLICO BORRADO")
+                canal_sanciones = self.bot.get_channel(CANAL_SANCIONES_ID)
+                if canal_sanciones:
+                    mensaje = await canal_sanciones.fetch_message(int(mensaje_publico_id))
+                    await mensaje.delete()
             except Exception as e:
                 print("ERROR BORRANDO MENSAJE:", e)
 
