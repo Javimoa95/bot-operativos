@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord import app_commands
 from datetime import datetime, timedelta
 import pytz
+from database import inicializar_db
 from sheets_manager import (
     conectar_sheet,
     obtener_o_crear_fila,
@@ -25,7 +26,8 @@ from operativos_manager import (
 )
 sheet = conectar_sheet()
 print("📊 Conectado a Google Sheets")
-
+inicializar_db()
+print("🗄 Base de datos inicializada")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
