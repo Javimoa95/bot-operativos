@@ -1,9 +1,9 @@
 import re
 
 pattern = re.compile(
-    r"ha (metido|sacado) x([\d\.]+) (.+?) \((.+?)\).*?'(.+?)'"
+    r"ha\s+(metido|sacado)\s+x([\d\.]+)\s+(.+?)\s+\(`(.+?)`\).*?'(.+?)'",
+    re.IGNORECASE
 )
-
 
 def parsear_mensaje(message):
 
