@@ -130,3 +130,17 @@ def obtener_sancion(id_sancion):
         "canal_id": fila[6],
         "mensaje_sancion_id": fila[7]
     }
+
+def actualizar_contador_mensaje(id_sancion, mensaje_id):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE sanciones
+        SET contador_mensaje_id = %s
+        WHERE id_unico = %s
+    """, (mensaje_id, id_sancion))
+
+    conn.commit()
+    cursor.close()
+    conn.close()

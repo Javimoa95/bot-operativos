@@ -552,6 +552,54 @@ async def borrarop(interaction: discord.Interaction, link: str):
             "⚠ No se encontró operativo.",
             ephemeral=True
         )
+@bot.event
+async def on_message(message):
 
+    if message.author.bot:
+        return
 
+    from sanciones_manager import (
+        obtener_sancion_por_canal,
+        actualizar_contador_mensaje
+    )
+
+    sancion = obtener_sancion_por_canal(message.channel.id)
+
+    if not sancion:
+        await bot.process_commands(message)
+        return
+
+    ahora = time.time()
+    canal_id = message.channel.id
+
+    # Anti spam (2 segundos mínimo)
+    if canal_id in ultimo_update_contador:
+        if ahora - ultimo_update_contador[canal_id] < 2:
+            await bot.process_commands(message)
+            return
+
+    ultimo_update_contador[canal_id] = ahora
+
+    id_sancion = sancion["id_unico"]
+    contador_id = sancion["contador_mensaje_id"]
+    fecha_limite = sancion["fecha_limite"]
+
+    # Borrar contador anterior
+    if contador_id:
+        try:
+            viejo = await message.channel.fetch_message(contador_id)
+            await viejo.delete()
+        except:
+            pass
+
+    # Enviar nuevo contador
+    nuevo = await message.channel.send(
+        f"⏳ Fecha límite: <t:{fecha_limite}:F>\n"
+        f"Tiempo restante: <t:{fecha_limite}:R>"
+    )
+
+    actualizar_contador_mensaje(id_sancion, nuevo.id)
+
+    await bot.process_commands(message)
+ultimo_update_contador = {}
 bot.run(BOT_TOKEN)
