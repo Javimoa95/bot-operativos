@@ -62,16 +62,17 @@ def actualizar_canal_sancion(id_sancion, canal_id, mensaje_publico_id):
 
 
 async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_mensaje):
+
+    CATEGORIA_SANCIONES_ID = 1477345672264159342
+    ROL_SANCIONADOR_ID = 1346520439433728060
+
     categoria = guild.get_channel(CATEGORIA_SANCIONES_ID)
     rol_sancionador = guild.get_role(ROL_SANCIONADOR_ID)
 
     overwrites = {
         guild.default_role: discord.PermissionOverwrite(view_channel=False),
         usuario: discord.PermissionOverwrite(view_channel=True, send_messages=True),
-        rol_sancionador: discord.PermissionOverwrite(
-            view_channel=True,
-            send_messages=True
-        ),
+        rol_sancionador: discord.PermissionOverwrite(view_channel=True, send_messages=True),
     }
 
     canal = await guild.create_text_channel(
@@ -80,14 +81,28 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
         overwrites=overwrites
     )
 
-    await canal.send(
+    # 🔔 MENCIÓN ROL Y BORRAR
+    aviso = await canal.send(f"{rol_sancionador.mention}")
+    await aviso.delete()
+
+    # 📌 MENSAJE PRINCIPAL
+    mensaje_principal = await canal.send(
         f"📌 **Sanción ID:** `{id_sancion}`\n\n"
         f"🔗 Mensaje oficial:\n{link_mensaje}\n\n"
         f"👤 Usuario: {usuario.mention}\n\n"
         f"⏳ Fecha límite: <t:{timestamp}:R>"
     )
 
-    return canal.id
+    await mensaje_principal.pin()
+
+    # ⏳ CONTADOR
+    contador = await canal.send(
+        f"⏳ Fecha límite: <t:{timestamp}:F>\n"
+        f"Tiempo restante: <t:{timestamp}:R>"
+    )
+
+    # ⚠️ IMPORTANTE: devolver TODO
+    return canal.id, mensaje_principal.id, contador.id
 
 def borrar_sancion(id_sancion):
     conn = conectar()
