@@ -29,15 +29,22 @@ def obtener_ultima_semana_exportada():
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT ultima_semana FROM armamento_control WHERE id = 1")
+    cursor.execute("""
+        SELECT ultima_semana
+        FROM armamento_control
+        ORDER BY ultima_semana DESC
+        LIMIT 1
+    """)
+
     row = cursor.fetchone()
 
+    cursor.close()
     conn.close()
 
     if row:
-        return row[0]
-    return None
+        return row["ultima_semana"]  # 🔥 IMPORTANTE
 
+    return None
 def actualizar_semana_exportada(semana):
 
     conn = conectar()
