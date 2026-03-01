@@ -57,7 +57,48 @@ def inicializar_db():
         PRIMARY KEY (operativo_id, user_id)
     )
     """)
-    
+    # ---- ARMAMENTO LOGS ACTUAL ----
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS armamento_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        message_id INTEGER UNIQUE,
+        user_id INTEGER,
+        username TEXT,
+        tipo TEXT,
+        categoria TEXT,
+        objeto_nombre TEXT,
+        objeto_codigo TEXT,
+        cantidad INTEGER,
+        almacen TEXT,
+        timestamp INTEGER
+    )
+    """)
+
+    # ---- ARMAMENTO HISTORIAL ----
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS armamento_logs_historial (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        message_id INTEGER,
+        user_id INTEGER,
+        username TEXT,
+        tipo TEXT,
+        categoria TEXT,
+        objeto_nombre TEXT,
+        objeto_codigo TEXT,
+        cantidad INTEGER,
+        almacen TEXT,
+        timestamp INTEGER,
+        semana INTEGER
+    )
+    """)
+
+    # ---- CONTROL SEMANA ARMAMENTO ----
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS armamento_control (
+        id INTEGER PRIMARY KEY,
+        ultima_semana INTEGER
+    )
+    """)
     conn.commit()
     cursor.close()
     conn.close()
