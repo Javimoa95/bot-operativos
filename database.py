@@ -5,10 +5,10 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 print("DATABASE_URL:", DATABASE_URL)
 
 def conectar():
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-    conn.autocommit = False
-    return conn
-
+    return psycopg2.connect(
+        os.getenv("DATABASE_URL"),
+        cursor_factory=psycopg2.extras.RealDictCursor
+    )
 def inicializar_db():
     conn = conectar()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
