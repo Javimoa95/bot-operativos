@@ -33,13 +33,16 @@ def inicio_semana_timestamp():
 
 def parsear_fecha(fecha_str):
     tz = pytz.timezone("Europe/Madrid")
-    dia, mes = map(int, fecha_str.split("/"))
+
+    try:
+        dia, mes = map(int, fecha_str.split("/"))
+    except:
+        return inicio_semana_timestamp()
+
     anio = datetime.now(tz).year
     fecha = datetime(anio, mes, dia, 0, 0)
     fecha = tz.localize(fecha)
-    return int(fecha.timestamp())
-
-# ---------------------------------------------------------
+    return int(fecha.timestamp())# ---------------------------------------------------------
 
 class Armamento(commands.Cog):
 
@@ -124,7 +127,7 @@ class Armamento(commands.Cog):
 
         for row in logs:
 
-            if categoria and row["categoria"] != categoria.value:
+            if categoria is not None and row["categoria"] != categoria.value:
                 continue
             codigo = row["objeto_codigo"]
             nombre = row["objeto_nombre"]
@@ -191,12 +194,7 @@ class Armamento(commands.Cog):
 
         texto += f"⚖ **Balance Neto:** {emoji_balance} `{balance_total}`"
 
-        embed.add_field(
-            name="📦 Movimientos de la Semana",
-            value=texto,
-            inline=False
-        )
-
+        embed.description = texto
         embed.set_footer(text="The Demons • Sistema de Armamento")
         embed.set_thumbnail(url=usuario.display_avatar.url)
 
