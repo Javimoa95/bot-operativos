@@ -19,9 +19,8 @@ def obtener_rango_semana():
     inicio = ahora - timedelta(days=ahora.weekday())
     fin = inicio + timedelta(days=6)
 
-    inicio_str = inicio.strftime("%d/%m")
-    fin_str = fin.strftime("%d/%m")
-
+    inicio_str = inicio.strftime("%d-%m")
+    fin_str = fin.strftime("%d-%m")
     return inicio_str, fin_str
 
 # -----------------------------------------------------
@@ -98,7 +97,7 @@ def generar_json_semana():
             "balance": balance
         }
 
-    nombre_archivo = f"logs semana {inicio_str} a {fin_str}.json"
+    nombre_archivo = f"logs_semana_{inicio_str}_a_{fin_str}.json"
 
     with open(nombre_archivo, "w", encoding="utf-8") as f:
         json.dump(data_final, f, indent=4, ensure_ascii=False)
