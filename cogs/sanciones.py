@@ -58,6 +58,12 @@ class Sanciones(commands.Cog):
             return
 
         pistolas = nivel
+        id_sancion = crear_sancion(
+            usuario.id,
+            nivel,
+            motivo,
+            timestamp
+        )
 
         mensaje = (
             f"**SANCION NIVEL {nivel} ARMAMENTISTICA :**\n\n"
@@ -80,12 +86,6 @@ class Sanciones(commands.Cog):
             return
         from sanciones_manager import crear_sancion, crear_canal_sancion, actualizar_canal_sancion
 
-        id_sancion = crear_sancion(
-            usuario.id,
-            nivel,
-            motivo,
-            timestamp
-        )
 
         mensaje_publico = await canal.send(mensaje)
 
