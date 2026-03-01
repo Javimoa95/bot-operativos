@@ -219,7 +219,12 @@ class Armamento(commands.Cog):
 
         if ultima == semana_actual:
             return
+        resultado = generar_json_semana()
 
+        # Si no hay datos de armas, no generar archivo
+        if not resultado:
+            actualizar_semana_exportada(semana_actual)
+            return
         nombre_archivo, semana = generar_json_semana()
 
         canal = self.bot.get_channel(CANAL_EXPORTES_ARMAMENTO_ID)

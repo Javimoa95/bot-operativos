@@ -39,18 +39,19 @@ def obtener_ultima_semana_exportada():
     return None
 
 def actualizar_semana_exportada(semana):
+
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute("""
-        INSERT OR REPLACE INTO armamento_control (id, ultima_semana)
-        VALUES (1, ?)
+        INSERT INTO armamento_control (id, ultima_semana)
+        VALUES (1, %s)
+        ON CONFLICT (id)
+        DO UPDATE SET ultima_semana = EXCLUDED.ultima_semana
     """, (semana,))
 
     conn.commit()
-    conn.close()
-
-# -----------------------------------------------------
+    conn.close()# -----------------------------------------------------
 
 def generar_json_semana():
 
@@ -82,7 +83,9 @@ def generar_json_semana():
         usuarios[user_id][tipo] += cantidad
 
     inicio_str, fin_str = obtener_rango_semana()
-
+    if not usuarios:
+        conn.close()
+        return None, obtener_semana_actual()
     data_final = {
         "semana": f"{inicio_str} - {fin_str}",
         "usuarios": {}
@@ -97,7 +100,7 @@ def generar_json_semana():
             "balance": balance
         }
 
-    nombre_archivo = f"logs_semana_{inicio_str}_a_{fin_str}.json"
+    nombre_archivo = f"/tmp/logs_semana_{inicio_str}_a_{fin_str}.json"
 
     with open(nombre_archivo, "w", encoding="utf-8") as f:
         json.dump(data_final, f, indent=4, ensure_ascii=False)
