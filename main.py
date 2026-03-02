@@ -318,6 +318,9 @@ async def revisar_operativos():
 
     for mensaje_id, timestamp, columna, procesado, recordatorio_enviado in operativos:
 
+        timestamp = int(timestamp)
+        procesado = bool(procesado)
+        recordatorio_enviado = bool(recordatorio_enviado)
         # ---- RECORDATORIO 2 HORAS ----
         if not recordatorio_enviado:
             tiempo_restante = timestamp - ahora

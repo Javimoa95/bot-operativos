@@ -155,7 +155,7 @@ def guardar_justificacion(operativo_id, user_id, mensaje_log_id):
 
 def obtener_operativos_pendientes():
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
 
     cursor.execute("""
         SELECT mensaje_id, timestamp, columna, procesado, recordatorio_enviado
@@ -163,13 +163,23 @@ def obtener_operativos_pendientes():
         WHERE procesado = FALSE
     """)
 
-    operativos = cursor.fetchall()
+    filas = cursor.fetchall()
 
     cursor.close()
     conn.close()
 
-    return operativos
+    resultado = []
 
+    for fila in filas:
+        resultado.append((
+            fila["mensaje_id"],
+            int(fila["timestamp"]),
+            fila["columna"],
+            fila["procesado"],
+            fila["recordatorio_enviado"]
+        ))
+
+    return resultado
 
 def marcar_operativo_procesado(mensaje_id):
     conn = conectar()
