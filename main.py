@@ -332,7 +332,9 @@ async def revisar_operativos():
 
     ahora = int(time.time())
     operativos = obtener_operativos_pendientes()
-
+    print("======== LOOP REVISAR OPERATIVOS ========")
+    print("OPERATIVOS:", operativos)
+    
     guild = bot.get_guild(GUILD_ID)
     if not guild:
         return
@@ -372,7 +374,7 @@ async def revisar_operativos():
                 marcar_recordatorio_enviado(mensaje_id)
 
         # ---------------- CIERRE AUTOMÁTICO ----------------
-        if ahora >= timestamp:
+        if ahora >= timestamp and not procesado:
 
             op = obtener_operativo(mensaje_id)
             if not op:
