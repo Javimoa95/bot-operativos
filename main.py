@@ -368,7 +368,7 @@ async def revisar_operativos():
                 marcar_recordatorio_enviado(mensaje_id)
 
         # ---- CIERRE AUTOMÁTICO ----
-        if ahora >= timestamp:
+        if ahora >= int(timestamp):
 
             op = obtener_operativo(mensaje_id)
             asistentes = op.get("asistentes", {})
@@ -377,7 +377,8 @@ async def revisar_operativos():
 
             for member in rol.members:
                 await asyncio.sleep(0.5)
-
+                if str(member.id) in asistentes:
+                    continue  # 🔥 YA MARCÓ, NO SANCIONAR
                 if str(member.id) not in asistentes:
 
                     from sanciones_manager import (

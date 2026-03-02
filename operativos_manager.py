@@ -17,7 +17,7 @@ from psycopg2.extras import RealDictCursor
 
 def obtener_operativo(mensaje_id):
     conn = conectar()
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor = conn.cursor()
 
     cursor.execute("""
         SELECT mensaje_id, timestamp, columna
@@ -31,6 +31,8 @@ def obtener_operativo(mensaje_id):
         cursor.close()
         conn.close()
         return None
+
+    mensaje_id_db, timestamp, columna = operativo
 
     cursor.execute("""
         SELECT user_id, estado
@@ -47,10 +49,7 @@ def obtener_operativo(mensaje_id):
     si = 0
     no = 0
 
-    for fila in asistentes:
-        user_id = fila["user_id"]
-        estado = fila["estado"]
-
+    for user_id, estado in asistentes:
         asistentes_dict[str(user_id)] = estado
 
         if estado == "SI":
@@ -59,14 +58,13 @@ def obtener_operativo(mensaje_id):
             no += 1
 
     return {
-        "mensaje_id": operativo["mensaje_id"],
-        "timestamp": int(operativo["timestamp"]),
-        "columna": operativo["columna"],
+        "mensaje_id": mensaje_id_db,
+        "timestamp": int(timestamp),  # 🔥 FORZAMOS INT
+        "columna": columna,
         "si": si,
         "no": no,
         "asistentes": asistentes_dict
     }
-
 
 def actualizar_contadores(mensaje_id, user_id, estado):
     conn = conectar()
