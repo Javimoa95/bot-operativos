@@ -115,17 +115,28 @@ async def crear_canal_sancion(bot, guild, usuario, id_sancion, timestamp, link_m
 
     return canal.id, mensaje_principal.id, contador.id
 
+from psycopg2.extras import RealDictCursor
+
 def obtener_sancion(id_sancion):
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-    cursor.execute(
-        "SELECT * FROM sanciones WHERE id_unico = %s",
-        (id_sancion,)
-    )
+    cursor.execute("""
+        SELECT id_unico,
+               user_id,
+               nivel,
+               motivo,
+               fecha_limite,
+               estado,
+               canal_id,
+               mensaje_sancion_id,
+               contador_mensaje_id,
+               mensaje_privado_id
+        FROM sanciones
+        WHERE id_unico = %s
+    """, (id_sancion,))
 
     fila = cursor.fetchone()
-    columnas = [desc[0] for desc in cursor.description] if cursor.description else []
 
     cursor.close()
     conn.close()
@@ -133,8 +144,7 @@ def obtener_sancion(id_sancion):
     if not fila:
         return None
 
-    return dict(zip(columnas, fila))
-
+    return fila
 
 def actualizar_contador_mensaje(id_sancion, mensaje_id):
     conn = conectar()

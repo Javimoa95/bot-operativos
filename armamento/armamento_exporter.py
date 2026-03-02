@@ -16,13 +16,17 @@ def obtener_rango_semana():
     tz = pytz.timezone("Europe/Madrid")
     ahora = datetime.now(tz)
 
+    # 🔥 Restamos 1 segundo para que el lunes 00:00 pertenezca
+    # a la semana que acaba de terminar
+    ahora = ahora - timedelta(seconds=1)
+
     inicio = ahora - timedelta(days=ahora.weekday())
     fin = inicio + timedelta(days=6)
 
     inicio_str = inicio.strftime("%d-%m")
     fin_str = fin.strftime("%d-%m")
-    return inicio_str, fin_str
 
+    return inicio_str, fin_str
 # -----------------------------------------------------
 
 def obtener_ultima_semana_exportada():
