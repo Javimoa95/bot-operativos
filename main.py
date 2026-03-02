@@ -269,15 +269,15 @@ class OperativoView(discord.ui.View):
         member = await interaction.guild.fetch_member(interaction.user.id)
 
         if not op:
-            await interaction.response.send_message("⛔ Operativo inválido.", ephemeral=True)
+            await interaction.followup.send("⛔ Operativo inválido.", ephemeral=True)
             return
 
         if int(time.time()) > int(op["timestamp"]):
-            await interaction.response.send_message("⛔ Operativo cerrado.", ephemeral=True)
+            await interaction.followup.send("⛔ Operativo cerrado.", ephemeral=True)
             return
 
         if not any(rol.id == ROL_OBJETIVO_ID for rol in member.roles):
-            await interaction.response.send_message("⛔ No tienes el rol necesario.", ephemeral=True)
+            await interaction.followup.send("⛔ No tienes el rol necesario.", ephemeral=True)
             return
 
         modal = JustificacionModal(interaction.message.id)
@@ -396,14 +396,9 @@ async def revisar_operativos():
                         mensaje_publico.id,
                         contador_id
                     )
-                    actualizar_canal_sancion(
-                        id_sancion,
-                        canal_id,
-                        mensaje_publico.id
-                    )
 
             # ---- RESPUESTA FINAL ----
-            canal_operativo = guild.get_channel(mensaje_publico.channel.id)
+            canal_operativo = bot.get_channel(op["canal_id"])
 
             try:
                 mensaje_operativo = await canal_operativo.fetch_message(mensaje_id)
@@ -445,13 +440,14 @@ async def operativo(
     descripcion: str,
     encargado: discord.Member,
 ):
+    await interaction.response.defer(ephemeral=True)
     rol_aviso = interaction.guild.get_role(ROL_AVISO_ID)
 
     # ----- PERMISOS -----
     member = await interaction.guild.fetch_member(interaction.user.id)
 
     if not any(rol.id == ROL_ADMIN_ID for rol in member.roles):
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "⛔ No tienes permiso para usar este comando.",
             ephemeral=True
         )
@@ -461,7 +457,7 @@ async def operativo(
     try:
         ts_operativo, ts_sede = crear_timestamps(fecha, hora)
     except:
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "❌ Formato inválido. Usa DD/MM y HH:MM",
             ephemeral=True
         )
@@ -514,7 +510,7 @@ async def operativo(
         columna_operativo,
 )
 
-    await interaction.response.send_message(
+    await interaction.followup.send(
         "✅ Operativo creado correctamente.",
         ephemeral=True
     )
@@ -526,7 +522,7 @@ async def borrarop(interaction: discord.Interaction, link: str):
     member = await interaction.guild.fetch_member(interaction.user.id)
 
     if not any(rol.id == ROL_ADMIN_ID for rol in member.roles):
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "⛔ No tienes permiso.",
             ephemeral=True
         )
@@ -559,6 +555,7 @@ async def borrarop(interaction: discord.Interaction, link: str):
             "⚠ No se encontró operativo.",
             ephemeral=True
         )
+
 @bot.event
 async def on_message(message):
 

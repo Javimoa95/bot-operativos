@@ -13,13 +13,15 @@ def agregar_operativo(mensaje_id, timestamp, columna):
     cursor.close()
     conn.close()
 
+from psycopg2.extras import RealDictCursor
 
 def obtener_operativo(mensaje_id):
     conn = conectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
 
     cursor.execute("""
-        SELECT * FROM operativos
+        SELECT mensaje_id, timestamp, columna
+        FROM operativos
         WHERE mensaje_id = %s
     """, (mensaje_id,))
 
@@ -45,17 +47,21 @@ def obtener_operativo(mensaje_id):
     si = 0
     no = 0
 
-    for user_id, estado in asistentes:
+    for fila in asistentes:
+        user_id = fila["user_id"]
+        estado = fila["estado"]
+
         asistentes_dict[str(user_id)] = estado
+
         if estado == "SI":
             si += 1
         elif estado == "NO":
             no += 1
 
     return {
-        "mensaje_id": mensaje_id,
-        "timestamp": operativo[1],
-        "columna": operativo[2],
+        "mensaje_id": operativo["mensaje_id"],
+        "timestamp": int(operativo["timestamp"]),
+        "columna": operativo["columna"],
         "si": si,
         "no": no,
         "asistentes": asistentes_dict
