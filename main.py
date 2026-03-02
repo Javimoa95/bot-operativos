@@ -344,14 +344,18 @@ async def revisar_operativos():
     for mensaje_id, timestamp, columna, procesado, recordatorio_enviado in operativos:
 
         timestamp = int(timestamp)
-        procesado = bool(procesado)
-        recordatorio_enviado = bool(recordatorio_enviado)
-        # ---- RECORDATORIO 2 HORAS ----
+
+        # ---------------- RECORDATORIO 2H ----------------
         if not recordatorio_enviado:
+
             tiempo_restante = timestamp - ahora
 
             if 0 < tiempo_restante <= 7200:
+
                 op = obtener_operativo(mensaje_id)
+                if not op:
+                    continue
+
                 asistentes = op.get("asistentes", {})
 
                 for member in rol.members:
@@ -367,70 +371,74 @@ async def revisar_operativos():
 
                 marcar_recordatorio_enviado(mensaje_id)
 
-        # ---- CIERRE AUTOMÁTICO ----
-        if ahora >= int(timestamp):
+        # ---------------- CIERRE AUTOMÁTICO ----------------
+        if ahora >= timestamp:
 
             op = obtener_operativo(mensaje_id)
+            if not op:
+                continue
+
             asistentes = op.get("asistentes", {})
 
             canal_publico = bot.get_channel(1220866157649727489)
+            if not canal_publico:
+                continue
 
             for member in rol.members:
-                await asyncio.sleep(0.5)
+
+                # 🔥 SI YA MARCÓ → NO SANCIONAR
                 if str(member.id) in asistentes:
-                    continue  # 🔥 YA MARCÓ, NO SANCIONAR
-                if str(member.id) not in asistentes:
+                    continue
 
-                    from sanciones_manager import (
-                        crear_sancion,
-                        crear_canal_sancion,
-                        actualizar_canal_sancion
-                    )
+                from sanciones_manager import (
+                    crear_sancion,
+                    crear_canal_sancion,
+                    actualizar_canal_sancion
+                )
 
-                    fecha_limite = ahora + (3 * 24 * 60 * 60)
+                fecha_limite = ahora + (3 * 24 * 60 * 60)
 
-                    id_sancion = crear_sancion(
-                        member.id,
-                        5,
-                        "no marcar operativo",
-                        fecha_limite
-                    )
+                id_sancion = crear_sancion(
+                    member.id,
+                    5,
+                    "no marcar operativo",
+                    fecha_limite
+                )
 
-                    mensaje_publico = await canal_publico.send(
-                        f"**SANCION NIVEL 5 ARMAMENTISTICA :**\n\n"
-                        f"**ID Sanción:** `{id_sancion}`\n\n"
-                        f"Tienes 1 aviso y debes de entregar: **5 pipas**\n\n"
-                        f"**Fecha limite:** <t:{fecha_limite}:d>\n\n"
-                        f"**Usuario sancionado:** {member.mention}\n\n"
-                        f"**Motivo:** no marcar operativo\n\n"
-                        f"Cualquier duda o fallo abre ticket.\n"
-                        f"Si cumples la sancion abre ticket con las pruebas y tagueame."
-                    )
+                mensaje_publico = await canal_publico.send(
+                    f"**SANCION NIVEL 5 ARMAMENTISTICA :**\n\n"
+                    f"**ID Sanción:** `{id_sancion}`\n\n"
+                    f"Tienes 1 aviso y debes de entregar: **5 pipas**\n\n"
+                    f"**Fecha limite:** <t:{fecha_limite}:d>\n\n"
+                    f"**Usuario sancionado:** {member.mention}\n\n"
+                    f"**Motivo:** no marcar operativo\n\n"
+                    f"Cualquier duda o fallo abre ticket.\n"
+                    f"Si cumples la sancion abre ticket con las pruebas y tagueame."
+                )
 
-                    link_mensaje = mensaje_publico.jump_url
+                link_mensaje = mensaje_publico.jump_url
 
-                    canal_id, mensaje_privado_id, contador_id = await crear_canal_sancion(
-                        bot,
-                        guild,
-                        member,
-                        id_sancion,
-                        fecha_limite,
-                        link_mensaje
-                    )
+                canal_id, mensaje_privado_id, contador_id = await crear_canal_sancion(
+                    bot,
+                    guild,
+                    member,
+                    id_sancion,
+                    fecha_limite,
+                    link_mensaje
+                )
 
-                    actualizar_canal_sancion(
-                        id_sancion,
-                        canal_id,
-                        mensaje_privado_id,
-                        mensaje_publico.id,
-                        contador_id
-                    )
+                actualizar_canal_sancion(
+                    id_sancion,
+                    canal_id,
+                    mensaje_privado_id,
+                    mensaje_publico.id,
+                    contador_id
+                )
 
-            # ---- RESPUESTA FINAL ----
-            canal_operativo = bot.get_channel(op["canal_id"])
-
+            # -------- MENSAJE FINAL EN OPERATIVO --------
             try:
-                mensaje_operativo = await canal_operativo.fetch_message(mensaje_id)
+                canal_operativo = guild.get_channel(operativos[0][0])
+                mensaje_operativo = await canal_publico.fetch_message(mensaje_id)
 
                 no_marcaron = [
                     member.mention

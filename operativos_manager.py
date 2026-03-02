@@ -32,7 +32,13 @@ def obtener_operativo(mensaje_id):
         conn.close()
         return None
 
-    mensaje_id_db, timestamp, columna = operativo
+    # 🔥 SOPORTA dict o tupla
+    if isinstance(operativo, dict):
+        mensaje_id_db = operativo["mensaje_id"]
+        timestamp = operativo["timestamp"]
+        columna = operativo["columna"]
+    else:
+        mensaje_id_db, timestamp, columna = operativo
 
     cursor.execute("""
         SELECT user_id, estado
@@ -49,7 +55,14 @@ def obtener_operativo(mensaje_id):
     si = 0
     no = 0
 
-    for user_id, estado in asistentes:
+    for row in asistentes:
+
+        if isinstance(row, dict):
+            user_id = row["user_id"]
+            estado = row["estado"]
+        else:
+            user_id, estado = row
+
         asistentes_dict[str(user_id)] = estado
 
         if estado == "SI":
@@ -59,13 +72,12 @@ def obtener_operativo(mensaje_id):
 
     return {
         "mensaje_id": mensaje_id_db,
-        "timestamp": int(timestamp),  # 🔥 FORZAMOS INT
+        "timestamp": int(timestamp),  # 🔥 ahora sí seguro
         "columna": columna,
         "si": si,
         "no": no,
         "asistentes": asistentes_dict
     }
-
 def actualizar_contadores(mensaje_id, user_id, estado):
     conn = conectar()
     cursor = conn.cursor()
@@ -151,6 +163,8 @@ def guardar_justificacion(operativo_id, user_id, mensaje_log_id):
     cursor.close()
     conn.close()
 
+from psycopg2.extras import RealDictCursor
+
 def obtener_operativos_pendientes():
     conn = conectar()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -171,14 +185,13 @@ def obtener_operativos_pendientes():
     for fila in filas:
         resultado.append((
             fila["mensaje_id"],
-            int(fila["timestamp"]),
+            int(fila["timestamp"]),  # 🔥 aseguramos tipo
             fila["columna"],
             fila["procesado"],
             fila["recordatorio_enviado"]
         ))
 
     return resultado
-
 def marcar_operativo_procesado(mensaje_id):
     conn = conectar()
     cursor = conn.cursor()
