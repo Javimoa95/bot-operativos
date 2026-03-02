@@ -95,7 +95,6 @@ class Armamento(commands.Cog):
         print("✅ Recuperación completada")
 
     # ---------------- /ARMAMENTO ----------------
-
     @app_commands.command(name="armamento", description="Ver estadísticas de un usuario")
     @app_commands.describe(
         usuario="Usuario a consultar",
@@ -116,11 +115,10 @@ class Armamento(commands.Cog):
         usuario: discord.User,
         fecha: str = None,
         categoria: Choice[str] = None
-    ):    
+    ):
         await interaction.response.defer()
 
         timestamp_inicio = parsear_fecha(fecha) if fecha else inicio_semana_timestamp()
-
         logs = obtener_logs_usuario(usuario.id, timestamp_inicio)
 
         if not logs:
@@ -131,8 +129,18 @@ class Armamento(commands.Cog):
 
         for row in logs:
 
-            if categoria is not None and row["categoria"] != categoria.value:
-                continue
+            categoria_log = row["categoria"].strip().lower()
+
+            # 🔫 FILTRO ESPECIAL ARMAS
+            if categoria and categoria.value == "armas":
+                if categoria_log != "arma":
+                    continue
+
+            # 🧠 RESTO DE CATEGORÍAS
+            elif categoria:
+                if categoria_log != categoria.value:
+                    continue
+
             codigo = row["objeto_codigo"]
             nombre = row["objeto_nombre"]
             tipo = row["tipo"]
@@ -146,11 +154,13 @@ class Armamento(commands.Cog):
                 }
 
             stats[codigo][tipo] += cantidad
-        nombre_categoria = "Todas"
 
-        if categoria:
-            nombre_categoria = categoria.name  # Ej: "🔫 Armas"
-        
+        if not stats:
+            await interaction.followup.send("⚠ No hay movimientos en esa categoría.")
+            return
+
+        nombre_categoria = categoria.name if categoria else "Todas"
+
         color_categoria = discord.Color.blue()
         if categoria:
             if categoria.value == "armas":
@@ -163,62 +173,47 @@ class Armamento(commands.Cog):
                 color_categoria = discord.Color.green()
             elif categoria.value == "drogas":
                 color_categoria = discord.Color.purple()
-                
+
         embed = discord.Embed(
             title="📊 Informe de Armamento",
             color=color_categoria
         )
+
         texto = ""
-        balance_total = 0
+        total_metido = 0
+        total_sacado = 0
 
         for data in stats.values():
-
-            balance = data["metido"] - data["sacado"]
-            balance_total += balance
 
             if data["metido"] == 0 and data["sacado"] == 0:
                 continue
 
-            # Emoji según arma
-            nombre_lower = data["nombre"].lower()
+            balance = data["metido"] - data["sacado"]
+            total_metido += data["metido"]
+            total_sacado += data["sacado"]
 
-            if "9mm" in nombre_lower:
-                emoji = "🔫"
-            elif "revolver" in nombre_lower:
-                emoji = "🔫"
-            elif "sns" in nombre_lower:
-                emoji = "💥"
-            elif "mk2" in nombre_lower:
-                emoji = "🚀"
-            elif "escopeta" in nombre_lower:
-                emoji = "💣"
-            elif "knife" in nombre_lower or "cuchillo" in nombre_lower:
-                emoji = "🔪"
-            else:
-                emoji = "🔹"
+            emoji = "🔫" if categoria and categoria.value == "armas" else "🔹"
 
-            linea = f"{emoji} **{data['nombre']}**\n"
+            texto += (
+                f"{emoji} **{data['nombre']}**\n"
+                f"➕ Metido: `{data['metido']}`\n"
+                f"➖ Sacado: `{data['sacado']}`\n"
+                f"⚖ Balance: `{balance}`\n\n"
+            )
 
-            if data["metido"] > 0:
-                linea += f"➕ Metido: ✅ `{data['metido']}`  "
-
-            if data["sacado"] > 0:
-                linea += f"➖ Sacado: ❌ `{data['sacado']}`"
-
-            linea += "\n\n"
-
-            texto += linea
-
+        balance_total = total_metido - total_sacado
         emoji_balance = "🟢" if balance_total >= 0 else "🔴"
-        texto += f"\n⚖ **Balance Neto:** {emoji_balance} `{balance_total}`"
 
-        embed = discord.Embed(
-            title="📊 Informe de Armamento",
-            color=color_categoria
+        texto += (
+            "────────────────\n\n"
+            f"📊 **Total categoría**\n"
+            f"➕ Metido: `{total_metido}`\n"
+            f"➖ Sacado: `{total_sacado}`\n"
+            f"⚖ {emoji_balance} Balance: `{balance_total}`"
         )
 
         embed.description = (
-            f"👤 **Usuario:** {usuario.name}\n"
+            f"👤 **Usuario:** {usuario.mention}\n"
             f"📂 **Categoría:** {nombre_categoria}\n\n"
             f"{texto}"
         )
@@ -230,18 +225,12 @@ class Armamento(commands.Cog):
     # ---------------- /RECUENTO ----------------
 
     @app_commands.command(name="recuento", description="Balance general de armas")
-    @app_commands.describe(
-        fecha="Fecha desde (DD/MM) opcional"
-    )
-    async def recuento(
-        self,
-        interaction: discord.Interaction,
-        fecha: str = None
-    ):
+    @app_commands.describe(fecha="Fecha desde (DD/MM) opcional")
+    async def recuento(self, interaction: discord.Interaction, fecha: str = None):
+
         await interaction.response.defer()
 
         timestamp_inicio = parsear_fecha(fecha) if fecha else inicio_semana_timestamp()
-
         logs = obtener_logs_desde(timestamp_inicio)
 
         if not logs:
@@ -252,18 +241,15 @@ class Armamento(commands.Cog):
 
         for row in logs:
 
-            # Detectar armas directamente por código
-            if not row["objeto_codigo"].startswith("WEAPON_"):
+            if row["categoria"].strip().lower() != "arma":
                 continue
 
             user_id = row["user_id"]
-            username = row["username"]
             tipo = row["tipo"]
             cantidad = row["cantidad"]
 
             if user_id not in usuarios:
                 usuarios[user_id] = {
-                    "username": username,
                     "metido": 0,
                     "sacado": 0
                 }
@@ -279,10 +265,21 @@ class Armamento(commands.Cog):
             embed.description = "⚠ No hay movimientos de armas esta semana."
         else:
             texto = ""
-            for data in usuarios.values():
+
+            for user_id, data in usuarios.items():
+
+                member = interaction.guild.get_member(user_id)
+                nombre = member.display_name if member else f"ID {user_id}"
+
                 balance = data["metido"] - data["sacado"]
                 emoji = "🟢" if balance >= 0 else "🔴"
-                texto += f"👤 **{data['username']}** → ⚖ {emoji} `{balance}`\n"
+
+                texto += (
+                    f"👤 **{nombre}**\n"
+                    f"➕ `{data['metido']}`  "
+                    f"➖ `{data['sacado']}`  "
+                    f"⚖ {emoji} `{balance}`\n\n"
+                )
 
             embed.description = texto
 

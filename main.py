@@ -43,8 +43,8 @@ ROL_OBJETIVO_ID = 1263582833218158652  # <-- PON AQUÍ EL ID DEL ROL
 ROL_ADMIN_ID = 1345432524314251306  # <-- ID del rol que puede usar /operativo
 ROL_AVISO_ID = 1263582833218158652  # <-- ID del rol que se menciona siempre
 CANAL_LOGS_ID = 1205530911991406693
-
-
+CANAL_ESTADO_BOT_ID = 1204823850274263140  # <-- PON TU ID
+mensaje_estado_bot = None
 async def load_cogs():
 
     # Cargar cogs normales
@@ -290,17 +290,42 @@ async def setup_hook():
 
 @bot.event
 async def on_ready():
+
+    global mensaje_estado_bot
+
+    canal_estado = bot.get_channel(CANAL_ESTADO_BOT_ID)
+
+    if canal_estado:
+
+        # Enviar mensaje temporal
+        mensaje_estado_bot = await canal_estado.send(
+            "⚠ **El bot se está actualizando...**\n"
+            "Por favor no interactuéis hasta que termine."
+        )
+
+    # ---- TU CÓDIGO ACTUAL ----
     guild = discord.Object(id=GUILD_ID)
+
     if not revisar_operativos.is_running():
         revisar_operativos.start()
+
     bot.tree.clear_commands(guild=guild)
     await bot.tree.sync(guild=guild)
     await bot.tree.sync()
     bot.add_view(OperativoView())
 
     print(f"✅ Bot conectado como {bot.user}")
-    print(bot.tree.get_commands())
 
+    # ---- MENSAJE FINAL ----
+    if mensaje_estado_bot:
+        await mensaje_estado_bot.edit(
+            content="✅ **Bot actualizado correctamente.**\n"
+                    "Ya podéis usarlo con normalidad."
+        )
+
+        # Opcional: borrar tras 10 segundos
+        await asyncio.sleep(10)
+        await mensaje_estado_bot.delete()
 
 @tasks.loop(seconds=60)
 async def revisar_operativos():
