@@ -334,7 +334,7 @@ async def revisar_operativos():
     operativos = obtener_operativos_pendientes()
     print("======== LOOP REVISAR OPERATIVOS ========")
     print("OPERATIVOS:", operativos)
-    
+
     guild = bot.get_guild(GUILD_ID)
     if not guild:
         return
@@ -465,6 +465,14 @@ async def revisar_operativos():
             marcar_operativo_procesado(mensaje_id)
 
 # -------- SLASH --------
+@bot.tree.command(name="discordid", description="Muestra tu ID de Discord")
+async def discordid(interaction: discord.Interaction):
+
+    await interaction.response.send_message(
+        f"🆔 Tu ID de Discord es:\n`{interaction.user.id}`",
+        ephemeral=True
+    )
+
 @bot.tree.command(name="operativo", description="Crear operativo automático")
 @app_commands.describe(
     fecha="Fecha DD/MM",
