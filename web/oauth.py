@@ -4,6 +4,7 @@ import requests
 CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
 CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("DISCORD_REDIRECT_URI")
+GUILD_ID = os.getenv("GUILD_ID")
 
 API_BASE = "https://discord.com/api"
 
@@ -18,7 +19,22 @@ def get_login_url():
         f"&scope=identify guilds"
     )
 
+def get_user_roles(access_token):
 
+    url = f"https://discord.com/api/users/@me/guilds/{GUILD_ID}/member"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    r = requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        return []
+
+    data = r.json()
+
+    return data["roles"]
 def exchange_code(code):
 
     data = {

@@ -30,20 +30,24 @@
 					<span>Inicio</span>
 				</a>
 
+				{% if ROL_OPERATIVOS in roles %}
 				<a class="nav-item {% if page == 'operativos' %}active{% endif %}" href="/operativos">
 					<i data-lucide="shield"></i>
 					<span>Operativos</span>
 				</a>
-
+				{% endif %}
+				{% if ROL_SANCIONES in roles %}
 				<a class="nav-item {% if page == 'sanciones' %}active{% endif %}" href="/sanciones">
 					<i data-lucide="scale"></i>
 					<span>Sanciones</span>
 				</a>
-
+				{% endif %}
+				{% if ROL_ARMAMENTO in roles %}
 				<a class="nav-item {% if page == 'armamento' %}active{% endif %}" href="/armamento">
 					<i data-lucide="sword"></i>
 					<span>Armamento</span>
 				</a>
+				{% endif %}
 			</div>
 
 		</div>

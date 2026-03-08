@@ -15,15 +15,21 @@ from datetime import datetime
 import io
 import pandas as pd
 from fastapi.responses import StreamingResponse
+from web.oauth import get_user_roles
 
 from bot.database import conectar
 
-
+ROL_OPERATIVOS = "1345432524314251306"
+ROL_SANCIONES = "1346520439433728060"
+ROL_ARMAMENTO = "1256650238832148520"
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
 app.add_middleware(SessionMiddleware, secret_key="supersecretkey")
 templates = Jinja2Templates(directory="web/templates")
+templates.env.globals["ROL_OPERATIVOS"] = ROL_OPERATIVOS
+templates.env.globals["ROL_SANCIONES"] = ROL_SANCIONES
+templates.env.globals["ROL_ARMAMENTO"] = ROL_ARMAMENTO
 import threading
 from bot.main import bot, BOT_TOKEN
 
@@ -120,7 +126,15 @@ async def callback(request: Request, code: str):
     user = get_user(access_token)
 
     request.session["user"] = user
+    token_data = exchange_code(code)
+    access_token = token_data["access_token"]
 
+    user = get_user(access_token)
+
+    roles = get_user_roles(access_token)
+
+    request.session["user"] = user
+    request.session["roles"] = roles
     return RedirectResponse("/dashboard")
 
 @app.get("/dashboard", response_class=HTMLResponse)
@@ -171,9 +185,16 @@ async def dashboard(request: Request):
 async def operativos(request: Request):
 
     user = request.session.get("user")
+    roles = request.session.get("roles", [])
 
     if not user:
         return RedirectResponse("/")
+
+    if ROL_OPERATIVOS not in roles:
+        return templates.TemplateResponse(
+            "403.html",
+            {"request": request, "user": user}
+        )
 
     conn = conectar()
     cur = conn.cursor()
@@ -183,12 +204,12 @@ async def operativos(request: Request):
         FROM operativos
         ORDER BY timestamp DESC
     """)
-    operativos = cur.fetchall()
-    for o in operativos:
-        if o["timestamp"]:
-            o["fecha"] = datetime.fromtimestamp(o["timestamp"]).strftime("%d/%m/%Y %H:%M")
-        else:
-            o["fecha"] = "-"
+
+    datos = cur.fetchall()
+
+    for op in datos:
+        op["fecha"] = datetime.fromtimestamp(op["timestamp"]).strftime("%d/%m/%Y %H:%M")
+
     cur.close()
     conn.close()
 
@@ -197,7 +218,9 @@ async def operativos(request: Request):
         {
             "request": request,
             "user": user,
-            "operativos": operativos
+            "roles": roles,
+            "operativos": datos,
+            "page": "operativos"
         }
     )
 
@@ -208,7 +231,13 @@ async def sanciones(request: Request):
 
     if not user:
         return RedirectResponse("/")
+    roles = request.session.get("roles", [])
 
+    if ROL_SANCIONES not in roles:
+        return templates.TemplateResponse(
+            "403.html",
+            {"request": request, "user": user}
+        )
     conn = conectar()
     cur = conn.cursor()
 
@@ -234,6 +263,7 @@ async def sanciones(request: Request):
         {
             "request": request,
             "user": user,
+            "roles": roles,
             "sanciones": sanciones
         }
     )
@@ -248,7 +278,13 @@ async def armamento(request: Request, page: int = 1, usuario: str = "", tipo: st
 
     limit = 20
     offset = (page - 1) * limit
+    roles = request.session.get("roles", [])
 
+    if ROL_ARMAMENTO not in roles:
+        return templates.TemplateResponse(
+            "403.html",
+            {"request": request, "user": user}
+        )
     conn = conectar()
     cur = conn.cursor()
 
@@ -290,6 +326,7 @@ async def armamento(request: Request, page: int = 1, usuario: str = "", tipo: st
             "user": user,
             "movimientos": movimientos,
             "page": page,
+            "roles": roles,
             "usuario": usuario,
             "tipo": tipo
         }

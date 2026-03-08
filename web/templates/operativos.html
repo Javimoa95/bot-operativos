@@ -1,34 +1,69 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
 
-<h1>Operativos</h1>
+{% block content %}
 
-<table class="data-table">
-	<tr>
-		<th>Mensaje</th>
-		<th>Fecha</th>
-		<th>Columna</th>
-		<th>Estado</th>
-	</tr>
+<h2>Operativos registrados</h2>
 
-	{% for o in operativos %}
+<table id="tablaOperativos" class="data-table">
 
-	<tr>
-		<td>{{o.mensaje_id}}</td>
+	<thead>
+		<tr>
+			<th>Mensaje</th>
+			<th>Fecha</th>
+			<th>Columna</th>
+			<th>Procesado</th>
+		</tr>
+	</thead>
 
-		<td>{{o.fecha}}</td>
+	<tbody>
 
-		<td>{{o.columna}}</td>
+		{% for op in operativos %}
 
-		<td>
-			{% if o.procesado %}
-			<span class="badge red">Procesado</span>
-			{% else %}
-			<span class="badge green">Activo</span>
-			{% endif %}
-		</td>
-	</tr>
+		<tr>
+			<td>{{ op.mensaje_id }}</td>
+			<td>{{ op.fecha }}</td>
+			<td>{{ op.columna }}</td>
+			<td>
 
-	{% endfor %}
+				{% if op.procesado %}
+				<span class="badge green">Sí</span>
+				{% else %}
+				<span class="badge red">No</span>
+				{% endif %}
+
+			</td>
+		</tr>
+
+		{% endfor %}
+
+	</tbody>
+
 </table>
 
 {% endblock %}
+
+<script>
+
+	$(document).ready(function () {
+
+		$('#tablaOperativos').DataTable({
+
+			pageLength: 10,
+
+			order: [[1, "desc"]],
+
+			language: {
+				search: "Buscar:",
+				lengthMenu: "Mostrar _MENU_",
+				info: "Mostrando _START_ a _END_ de _TOTAL_",
+				paginate: {
+					previous: "Anterior",
+					next: "Siguiente"
+				}
+			}
+
+		});
+
+	});
+
+</script>
