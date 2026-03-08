@@ -1,153 +1,131 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
+
 <meta charset="UTF-8">
-<title>Dashboard</title>
+<title>Panel Operativos</title>
 
-<style>
-
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0a0f2c;
-    color:white;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-    width:250px;
-    height:100vh;
-    background:#070b1e;
-    position:fixed;
-    padding:20px;
-}
-
-.sidebar h2{
-    color:#ffd500;
-}
-
-.menu{
-    margin-top:30px;
-}
-
-.menu a{
-    display:block;
-    padding:12px;
-    text-decoration:none;
-    color:white;
-}
-
-.menu a:hover{
-    background:#11184a;
-}
-
-/* MAIN */
-
-.main{
-    margin-left:250px;
-    padding:40px;
-}
-
-.card{
-    background:#11184a;
-    padding:25px;
-    border-radius:10px;
-    margin-bottom:20px;
-}
-
-.user{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.avatar{
-    width:40px;
-    border-radius:50%;
-}
-
-</style>
+<link rel="stylesheet" href="/static/css/dashboard.css">
 
 </head>
 
 <body>
 
-<div class="sidebar">
+<div class="container">
 
-<h2>The Demons</h2>
+<!-- HEADER -->
 
-<div class="menu">
-<a href="#">Dashboard</a>
-<a href="#">Sanciones</a>
-<a href="#">Operativos</a>
-<a href="#">Armamento</a>
-<a href="#">Comandos</a>
+<div class="header">
+
+<div class="header-left">
+
+<img class="logo-img" src="/static/images/logo_td.webp">
+
+<div class="logo-text">
+The Demons
+<span>Panel Operativos</span>
 </div>
 
 </div>
-
-<div class="main">
 
 <div class="user">
 
 <img class="avatar"
 src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
 
-<h3>{{user.username}}</h3>
+<span>{{ user.username }}</span>
 
 </div>
 
+</div>
+
+
+<!-- CARDS -->
+
+<div class="cards">
+
 <div class="card">
-<h3>Operativos registrados</h3>
-<p>{{stats.operativos}}</p>
+<div class="card-icon">⚖️</div>
+<div class="card-info">
+<div class="card-title">Sanciones</div>
+<div class="card-number">{{ stats.sanciones }}</div>
+</div>
 </div>
 
 <div class="card">
-<h3>Sanciones registradas</h3>
-<p>{{stats.sanciones}}</p>
+<div class="card-icon">🚓</div>
+<div class="card-info">
+<div class="card-title">Operativos</div>
+<div class="card-number">{{ stats.operativos }}</div>
+</div>
 </div>
 
 <div class="card">
-<h3>Armamento</h3>
-<p>Estadísticas de armas.</p>
+<div class="card-icon">📦</div>
+<div class="card-info">
+<div class="card-title">Movimientos</div>
+<div class="card-number">{{ movimientos|length }}</div>
+</div>
+</div>
+
+</div>
+
+
+<!-- ACTIVIDAD -->
+
+<div class="table-container">
+
 <h2>Actividad reciente</h2>
 
 <table>
-    <tr>
-        <th>Usuario</th>
-        <th>Acción</th>
-        <th>Objeto</th>
-        <th>Cantidad</th>
-        <th>Almacén</th>
-    </tr>
 
-    {% for m in movimientos %}
-    <tr>
-        <td>{{ m.username }}</td>
-        <td>{{ m.tipo }}</td>
-        <td>{{ m.objeto_nombre }}</td>
-        <td>{{ m.cantidad }}</td>
-        <td>{{ m.almacen }}</td>
-    </tr>
-    {% endfor %}
-</table>
-</div>
-<h2>Top uso de armamento</h2>
-
-<table>
+<thead>
 <tr>
-    <th>Usuario</th>
-    <th>Total retirado</th>
+<th>Usuario</th>
+<th>Acción</th>
+<th>Objeto</th>
+<th>Cantidad</th>
+<th>Almacén</th>
+<th>Hora</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for m in movimientos %}
+
+<tr>
+
+<td class="user-cell">
+{{ m.username }}
+</td>
+
+<td>
+{% if m.tipo == "sacado" %}
+<span class="badge red">Sacado</span>
+{% else %}
+<span class="badge green">Metido</span>
+{% endif %}
+</td>
+
+<td>{{ m.objeto_nombre }}</td>
+
+<td>{{ m.cantidad }}</td>
+
+<td>{{ m.almacen }}</td>
+
+<td class="time">{{ m.fecha }}</td>
+
 </tr>
 
-{% for r in ranking %}
-<tr>
-    <td>{{ r.username }}</td>
-    <td>{{ r.total }}</td>
-</tr>
 {% endfor %}
+
+</tbody>
+
 </table>
+
+</div>
+
 </div>
 
 </body>
