@@ -6,29 +6,38 @@
 	<tr>
 		<th>ID</th>
 		<th>Usuario</th>
+		<th>Nivel</th>
 		<th>Motivo</th>
-		<th>Tipo</th>
-		<th>Fecha</th>
+		<th>Fecha límite</th>
+		<th>Estado</th>
 	</tr>
 
 	{% for s in sanciones %}
 
 	<tr>
-		<td>{{s.id}}</td>
+		<td>{{s.id_unico}}</td>
 
-		<td>{{s.usuario}}</td>
-
-		<td>{{s.motivo}}</td>
+		<td>{{s.user_id}}</td>
 
 		<td>
-			{% if s.tipo == "grave" %}
+			{% if s.nivel >= 3 %}
 			<span class="badge red">Grave</span>
 			{% else %}
 			<span class="badge yellow">Leve</span>
 			{% endif %}
 		</td>
 
+		<td>{{s.motivo}}</td>
+
 		<td>{{s.fecha}}</td>
+
+		<td>
+			{% if s.estado == "activa" %}
+			<span class="badge red">Activa</span>
+			{% else %}
+			<span class="badge green">Cumplida</span>
+			{% endif %}
+		</td>
 	</tr>
 
 	{% endfor %}

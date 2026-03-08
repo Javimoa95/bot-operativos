@@ -4,24 +4,24 @@
 
 <table class="data-table">
 	<tr>
-		<th>ID</th>
+		<th>Mensaje</th>
 		<th>Fecha</th>
-		<th>Máx asistentes</th>
+		<th>Columna</th>
 		<th>Estado</th>
 	</tr>
 
 	{% for o in operativos %}
 
 	<tr>
-		<td>{{o.id}}</td>
+		<td>{{o.mensaje_id}}</td>
 
 		<td>{{o.fecha}}</td>
 
-		<td>{{o.max_asistentes}}</td>
+		<td>{{o.columna}}</td>
 
 		<td>
-			{% if o.cerrado %}
-			<span class="badge red">Cerrado</span>
+			{% if o.procesado %}
+			<span class="badge red">Procesado</span>
 			{% else %}
 			<span class="badge green">Activo</span>
 			{% endif %}

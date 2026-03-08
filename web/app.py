@@ -159,13 +159,16 @@ async def operativos(request: Request):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, fecha, max_asistentes, cerrado
+        SELECT mensaje_id, timestamp, columna, procesado
         FROM operativos
-        ORDER BY fecha DESC
+        ORDER BY timestamp DESC
     """)
-
     operativos = cur.fetchall()
-
+    for o in operativos:
+        if o["timestamp"]:
+            o["fecha"] = datetime.fromtimestamp(o["timestamp"]).strftime("%d/%m/%Y %H:%M")
+        else:
+            o["fecha"] = "-"
     cur.close()
     conn.close()
 
@@ -190,16 +193,22 @@ async def sanciones(request: Request):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, usuario, motivo, tipo, fecha
+        SELECT id_unico, user_id, nivel, motivo, fecha_limite, estado
         FROM sanciones
-        ORDER BY fecha DESC
+        ORDER BY fecha_limite DESC
     """)
 
     sanciones = cur.fetchall()
 
+    for s in sanciones:
+        if s["fecha_limite"]:
+            s["fecha"] = datetime.fromtimestamp(s["fecha_limite"]).strftime("%d/%m/%Y %H:%M")
+        else:
+            s["fecha"] = "-"
+
     cur.close()
     conn.close()
-
+    
     return templates.TemplateResponse(
         "sanciones.html",
         {
@@ -284,7 +293,7 @@ async def exportar_armamento(request: Request):
         objeto_nombre AS objeto,
         cantidad,
         almacen,
-        to_timestamp(timestamp) AS fecha
+        to_char(to_timestamp(timestamp), 'YYYY-MM-DD HH24:MI') AS fecha
         FROM armamento_logs
         ORDER BY timestamp DESC
     """)
@@ -295,6 +304,8 @@ async def exportar_armamento(request: Request):
     conn.close()
 
     df = pd.DataFrame(rows)
+    if "fecha" in df.columns:
+        df["fecha"] = df["fecha"].dt.tz_localize(None)
 
     output = io.BytesIO()
 
