@@ -2,23 +2,62 @@
 
 {% block content %}
 
-<h1>Dashboard</h1>
-
 <div class="cards">
 
-<div class="card">
-<div class="card-title">Sanciones</div>
-<div class="card-number">{{ stats.sanciones }}</div>
+<div class="card card-blue">
+
+<div class="card-icon">⚖️</div>
+
+<div class="card-info">
+
+<div class="card-title">
+Sanciones
 </div>
 
-<div class="card">
-<div class="card-title">Operativos</div>
-<div class="card-number">{{ stats.operativos }}</div>
+<div class="card-number">
+{{ stats.sanciones }}
 </div>
 
-<div class="card">
-<div class="card-title">Movimientos</div>
-<div class="card-number">{{ movimientos|length }}</div>
+</div>
+
+</div>
+
+
+<div class="card card-purple">
+
+<div class="card-icon">🚓</div>
+
+<div class="card-info">
+
+<div class="card-title">
+Operativos
+</div>
+
+<div class="card-number">
+{{ stats.operativos }}
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card card-red">
+
+<div class="card-icon">🔫</div>
+
+<div class="card-info">
+
+<div class="card-title">
+Actividad armamento
+</div>
+
+<div class="card-number">
+—
+</div>
+
+</div>
+
 </div>
 
 </div>

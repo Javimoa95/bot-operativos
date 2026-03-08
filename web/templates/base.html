@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
+
 <title>The Demons Panel</title>
 
 <link rel="stylesheet" href="/static/css/dashboard.css">
@@ -17,7 +19,7 @@
 
 <div class="sidebar">
 
-<div class="sidebar-logo">
+<div class="sidebar-top">
 
 <img src="/static/images/logo_td.webp">
 
@@ -25,21 +27,40 @@
 
 </div>
 
-<a href="/dashboard">Dashboard</a>
-<a href="/operativos">Operativos</a>
-<a href="/sanciones">Sanciones</a>
-<a href="/armamento">Armamento</a>
+<div class="nav">
+
+<a class="nav-item" href="/dashboard">
+<span>🏠</span> Inicio
+</a>
+
+<a class="nav-item" href="/operativos">
+<span>🚓</span> Operativos
+</a>
+
+<a class="nav-item" href="/sanciones">
+<span>⚖️</span> Sanciones
+</a>
+
+<a class="nav-item" href="/armamento">
+<span>🔫</span> Armamento
+</a>
+
+</div>
 
 </div>
 
 
-<!-- CONTENIDO -->
+<!-- MAIN -->
 
 <div class="main">
 
 <div class="topbar">
 
-<div class="topbar-user">
+<div class="title">
+Panel de Control
+</div>
+
+<div class="user">
 
 <img src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
 
