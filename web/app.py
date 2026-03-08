@@ -144,12 +144,12 @@ async def dashboard(request: Request):
     WHEN tipo='metido' THEN cantidad
     WHEN tipo='sacado' THEN -cantidad
     END
-    ),0)
+    ),0) AS total
     FROM armamento_logs
     WHERE user_id = %s
     """, (user["id"],))
 
-    recuento = cur.fetchone()[0]
+    recuento = cur.fetchone()["total"]
 
     cur.close()
     conn.close()
