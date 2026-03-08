@@ -654,4 +654,5 @@ async def on_message(message):
     await bot.process_commands(message)
 
 ultimo_update_contador = {}
-bot.run(BOT_TOKEN)
+if __name__ == "__main__":
+    bot.run(BOT_TOKEN)
