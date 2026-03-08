@@ -304,9 +304,7 @@ async def exportar_armamento(request: Request):
     conn.close()
 
     df = pd.DataFrame(rows)
-    if "fecha" in df.columns:
-        df["fecha"] = df["fecha"].dt.tz_localize(None)
-
+    
     output = io.BytesIO()
 
     with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
