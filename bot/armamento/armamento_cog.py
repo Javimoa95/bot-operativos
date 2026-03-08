@@ -107,7 +107,8 @@ class Armamento(commands.Cog):
         Choice(name="🛡 Equipamiento", value="equipamiento"),
         Choice(name="🍔 Comida", value="comida"),
         Choice(name="🌿 Drogas", value="drogas"),
-        Choice(name="📦 Otros", value="otros")
+        Choice(name="📦 Otros", value="otros"),
+        Choice(name="💵 Dinero", value="dinero")
     ])
     async def armamento(
         self,

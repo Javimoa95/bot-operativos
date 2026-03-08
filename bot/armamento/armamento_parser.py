@@ -48,9 +48,10 @@ def parsear_mensaje(message):
 
 def detectar_categoria(codigo):
 
-    if codigo.startswith("WEAPON_"):
+    if codigo in [
+        "WEAPON_PISTOL", "WEAPON_PISTOL_MK2", "WEAPON_SNSPISTOL_MK2", "WEAPON_COMBATPISTOL", "WEAPON_DOUBLEACTION"
+    ]:
         return "arma"
-
     if codigo.startswith("ammo-"):
         return "municion"
 
@@ -74,7 +75,10 @@ def detectar_categoria(codigo):
 
 def obtener_categoria(objeto_codigo):
 
-    if objeto_codigo.startswith("WEAPON_"):
+    if objeto_codigo in [
+        "WEAPON_PISTOL", "WEAPON_PISTOL_MK2", "WEAPON_SNSPISTOL_MK2", "WEAPON_COMBATPISTOL", "WEAPON_DOUBLEACTION"
+
+    ]:
         return "armas"
 
     if objeto_codigo.startswith("ammo"):
