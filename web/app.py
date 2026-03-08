@@ -39,7 +39,7 @@ def obtener_stats():
     cur = conn.cursor()
 
     cur.execute("SELECT COUNT(*) FROM sanciones")
-    sanciones = cur.fetchone()[0]
+    sanciones = cur.fetchone()["count"]
 
     cur.execute("SELECT COUNT(*) FROM operativos")
     operativos = cur.fetchone()[0]
