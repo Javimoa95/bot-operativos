@@ -12,3 +12,4 @@ requests
 authlib
 python-dotenv
 itsdangerous
+pandas

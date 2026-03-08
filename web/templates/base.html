@@ -1,109 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>The Demons Panel</title>
 
-<head>
+		<link rel="stylesheet" href="/static/css/dashboard.css?v=3" />
+		<script src="https://unpkg.com/lucide@latest"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.datatables.net/1.13.7/css/dataTables.dark.min.css" />
 
-<meta charset="UTF-8">
-<title>The Demons Panel</title>
+		<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+	</head>
 
-<link rel="stylesheet" href="/static/css/dashboard.css?v=3">
-<script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.dark.min.css">
+	<body>
+		<div class="layout">
+			<!-- SIDEBAR -->
 
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+			<div class="sidebar" id="sidebar">
+				<div class="sidebar-top">
+					<img src="/static/images/logo_td.webp" />
+					<span class="logo-text">The Demons</span>
+				</div>
 
+				<div class="nav">
+					<a
+						class="nav-item {% if page == 'dashboard' %}active{% endif %}"
+						href="/dashboard">
+						<i data-lucide="home"></i>
+						<span>Inicio</span>
+					</a>
 
-</head>
+					<a
+						class="nav-item {% if page == 'operativos' %}active{% endif %}"
+						href="/operativos">
+						<i data-lucide="shield"></i>
+						<span>Operativos</span>
+					</a>
 
-<body>
+					<a
+						class="nav-item {% if page == 'sanciones' %}active{% endif %}"
+						href="/sanciones">
+						<i data-lucide="scale"></i>
+						<span>Sanciones</span>
+					</a>
 
-<div class="layout">
+					<a
+						class="nav-item {% if page == 'armamento' %}active{% endif %}"
+						href="/armamento">
+						<i data-lucide="sword"></i>
+						<span>Armamento</span>
+					</a>
+				</div>
 
-<!-- SIDEBAR -->
+				<button class="collapse-btn" onclick="toggleSidebar()">
+					<i data-lucide="chevrons-left"></i>
+				</button>
+			</div>
 
-<div class="sidebar" id="sidebar">
+			<!-- MAIN -->
 
-<div class="sidebar-top">
+			<div class="main">
+				<div class="topbar">
+					<div class="title">Panel de Control</div>
 
-<img src="/static/images/logo_td.webp">
-<span class="logo-text">The Demons</span>
+					<div class="user">
+						<img
+							src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png" />
+						<span>{{user.username}}</span>
+					</div>
+				</div>
 
-</div>
+				<div class="content">{% block content %}{% endblock %}</div>
+			</div>
+		</div>
 
-<div class="nav">
+		<script>
+			lucide.createIcons();
 
-<a class="nav-item {% if page == 'dashboard' %}active{% endif %}" href="/dashboard">
-<i data-lucide="home"></i>
-<span>Inicio</span>
-</a>
-
-<a class="nav-item {% if page == 'operativos' %}active{% endif %}" href="/operativos">
-<i data-lucide="shield"></i>
-<span>Operativos</span>
-</a>
-
-<a class="nav-item {% if page == 'sanciones' %}active{% endif %}" href="/sanciones">
-<i data-lucide="scale"></i>
-<span>Sanciones</span>
-</a>
-
-<a class="nav-item {% if page == 'armamento' %}active{% endif %}" href="/armamento">
-<i data-lucide="sword"></i>
-<span>Armamento</span>
-</a>
-
-</div>
-
-<button class="collapse-btn" onclick="toggleSidebar()">
-<i data-lucide="chevrons-left"></i>
-</button>
-
-</div>
-
-
-<!-- MAIN -->
-
-<div class="main">
-
-<div class="topbar">
-
-<div class="title">
-Panel de Control
-</div>
-
-<div class="user">
-
-<img src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
-<span>{{user.username}}</span>
-
-</div>
-
-</div>
-
-
-<div class="content">
-
-{% block content %}{% endblock %}
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-lucide.createIcons()
-
-function toggleSidebar(){
-document.getElementById("sidebar").classList.toggle("collapsed")
-}
-
-</script>
-
-</body>
+			function toggleSidebar() {
+				document.getElementById("sidebar").classList.toggle("collapsed");
+			}
+		</script>
+	</body>
 </html>

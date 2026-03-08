@@ -12,7 +12,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime
-
+import io
+import pandas as pd
+from fastapi.responses import StreamingResponse
 
 from bot.database import conectar
 
@@ -228,4 +230,51 @@ async def armamento(request: Request, page: int = 1, usuario: str = "", tipo: st
             "usuario": usuario,
             "tipo": tipo
         }
+    )
+    
+@app.get("/armamento/export")
+async def exportar_armamento(request: Request):
+
+    user = request.session.get("user")
+
+    if not user:
+        return RedirectResponse("/")
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+        username AS usuario,
+        tipo,
+        objeto_nombre AS objeto,
+        cantidad,
+        almacen,
+        to_timestamp(timestamp) AS fecha
+        FROM armamento_logs
+        ORDER BY timestamp DESC
+    """)
+
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    df = pd.DataFrame(rows)
+
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, index=False, sheet_name="Armamento")
+
+    output.seek(0)
+
+    headers = {
+        "Content-Disposition": "attachment; filename=armamento_logs.xlsx"
+    }
+
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers
     )
