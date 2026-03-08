@@ -4,21 +4,24 @@
 <head>
 
 <meta charset="UTF-8">
-
 <title>The Demons Panel</title>
 
-<link rel="stylesheet" href="/static/css/dashboard.css">
+<link rel="stylesheet" href="/static/css/dashboard.css?v=3">
 <script src="https://unpkg.com/lucide@latest"></script>
+
 </head>
 
 <body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
 
 <div class="sidebar" id="sidebar">
 
 <div class="sidebar-top">
 
 <img src="/static/images/logo_td.webp">
-
 <span class="logo-text">The Demons</span>
 
 </div>
@@ -48,12 +51,11 @@
 </div>
 
 <button class="collapse-btn" onclick="toggleSidebar()">
-
 <i data-lucide="chevrons-left"></i>
-
 </button>
 
 </div>
+
 
 <!-- MAIN -->
 
@@ -68,7 +70,6 @@ Panel de Control
 <div class="user">
 
 <img src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
-
 <span>{{user.username}}</span>
 
 </div>
@@ -85,6 +86,17 @@ Panel de Control
 </div>
 
 </div>
+
+
+<script>
+
+lucide.createIcons()
+
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("collapsed")
+}
+
+</script>
 
 </body>
 </html>
