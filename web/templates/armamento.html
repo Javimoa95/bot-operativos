@@ -27,7 +27,7 @@ placeholder="Buscar en la tabla..."
 onkeyup="filtrarTabla()"
 />
 
-<button onclick="exportarExcel()">
+<button type="button" onclick="exportarExcel()" class="btn-export">
 Exportar Excel
 </button>
 
@@ -74,14 +74,21 @@ Exportar Excel
 
 <div class="pagination">
 
-<a href="?page={{page-1}}&usuario={{usuario}}&tipo={{tipo}}">Anterior</a>
+<a class="page-btn"
+href="?page={{page-1}}&usuario={{usuario}}&tipo={{tipo}}">
+◀ Anterior
+</a>
 
-<span>Página {{page}}</span>
-
-<a href="?page={{page+1}}&usuario={{usuario}}&tipo={{tipo}}">Siguiente</a>
-
+<div class="page-number">
+Página {{page}}
 </div>
 
+<a class="page-btn"
+href="?page={{page+1}}&usuario={{usuario}}&tipo={{tipo}}">
+Siguiente ▶
+</a>
+
+</div>
 {% endblock %}
 <script>
 
@@ -110,10 +117,40 @@ function exportarExcel(){
 
 let tabla = document.getElementById("tablaArmamento")
 
+if(!tabla){
+alert("No se encontró la tabla")
+return
+}
+
 let wb = XLSX.utils.table_to_book(tabla,{sheet:"Armamento"})
 
 XLSX.writeFile(wb,"armamento_logs.xlsx")
 
 }
+
+$(document).ready(function(){
+
+$('#tablaArmamento').DataTable({
+
+pageLength:20,
+
+lengthMenu:[10,20,50,100],
+
+order:[[5,'desc']],
+
+language:{
+search:"Buscar:",
+lengthMenu:"Mostrar _MENU_ registros",
+info:"Mostrando _START_ a _END_ de _TOTAL_ movimientos",
+paginate:{
+previous:"◀",
+next:"▶"
+}
+}
+
+})
+
+})
+
 
 </script>
