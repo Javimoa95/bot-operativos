@@ -55,6 +55,7 @@ def obtener_stats():
     }
 
 
+
 def obtener_movimientos_recientes():
 
     conn = conectar()
@@ -62,14 +63,13 @@ def obtener_movimientos_recientes():
 
     cur.execute("""
         SELECT username, tipo, objeto_nombre, cantidad, almacen, timestamp
-        FROM movimientos
+        FROM armamento_logs
         ORDER BY timestamp DESC
         LIMIT 20
     """)
 
     movimientos = cur.fetchall()
 
-    # convertir timestamp a fecha legible
     for m in movimientos:
         m["fecha"] = datetime.fromtimestamp(m["timestamp"]).strftime("%d/%m %H:%M")
 
@@ -77,6 +77,8 @@ def obtener_movimientos_recientes():
     conn.close()
 
     return movimientos
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
