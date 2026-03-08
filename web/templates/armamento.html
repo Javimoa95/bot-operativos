@@ -4,60 +4,116 @@
 
 <h1>Armamento</h1>
 
-<div class="chart-container">
+<form method="get" class="filters">
 
-<h2>Actividad de armamento</h2>
+<input type="text" name="usuario" placeholder="Buscar usuario" value="{{usuario}}">
 
-<canvas id="armamentoChart"></canvas>
+<select name="tipo">
+<option value="">Todos</option>
+<option value="metido">Metido</option>
+<option value="sacado">Sacado</option>
+</select>
+
+<button type="submit">Buscar</button>
+
+</form>
+
+<div class="table-tools">
+
+<input
+type="text"
+id="searchTable"
+placeholder="Buscar en la tabla..."
+onkeyup="filtrarTabla()"
+/>
+
+<button onclick="exportarExcel()">
+Exportar Excel
+</button>
+
+</div>
+
+<table class="data-table" id="tablaArmamento">
+<tr>
+<th>Usuario</th>
+<th>Tipo</th>
+<th>Objeto</th>
+<th>Cantidad</th>
+<th>Almacén</th>
+<th>Fecha</th>
+</tr>
+
+{% for m in movimientos %}
+
+<tr>
+
+<td>{{m.username}}</td>
+
+<td>
+{% if m.tipo == "sacado" %}
+<span class="badge red">Sacado</span>
+{% else %}
+<span class="badge green">Metido</span>
+{% endif %}
+</td>
+
+<td>{{m.objeto_nombre}}</td>
+
+<td>{{m.cantidad}}</td>
+
+<td>{{m.almacen}}</td>
+
+<td>{{m.fecha}}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+<div class="pagination">
+
+<a href="?page={{page-1}}&usuario={{usuario}}&tipo={{tipo}}">Anterior</a>
+
+<span>Página {{page}}</span>
+
+<a href="?page={{page+1}}&usuario={{usuario}}&tipo={{tipo}}">Siguiente</a>
 
 </div>
 
 {% endblock %}
-
-
 <script>
 
-const ctx = document.getElementById('armamentoChart');
+function filtrarTabla(){
 
-new Chart(ctx, {
+let input = document.getElementById("searchTable").value.toLowerCase()
+let tabla = document.getElementById("tablaArmamento")
+let filas = tabla.getElementsByTagName("tr")
 
-type:'line',
+for(let i=1;i<filas.length;i++){
 
-data:{
+let texto = filas[i].innerText.toLowerCase()
 
-labels:['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
-
-datasets:[{
-
-label:'Movimientos',
-
-data:[5,12,8,10,6,14,7],
-
-borderColor:'#ef4444',
-
-backgroundColor:'rgba(239,68,68,0.2)',
-
-fill:true,
-
-tension:0.4
-
-}]
-
-},
-
-options:{
-
-plugins:{
-legend:{display:false}
-},
-
-scales:{
-x:{grid:{display:false}},
-y:{grid:{color:'#1e293b'}}
+if(texto.includes(input)){
+filas[i].style.display=""
+}else{
+filas[i].style.display="none"
 }
 
 }
 
-});
+}
+
+
+function exportarExcel(){
+
+let tabla = document.getElementById("tablaArmamento")
+
+let wb = XLSX.utils.table_to_book(tabla,{sheet:"Armamento"})
+
+XLSX.writeFile(wb,"armamento_logs.xlsx")
+
+}
 
 </script>

@@ -174,14 +174,58 @@ async def sanciones(request: Request):
 
 
 @app.get("/armamento", response_class=HTMLResponse)
-async def armamento(request: Request):
+async def armamento(request: Request, page: int = 1, usuario: str = "", tipo: str = ""):
 
     user = request.session.get("user")
 
     if not user:
         return RedirectResponse("/")
 
+    limit = 20
+    offset = (page - 1) * limit
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    query = """
+        SELECT username, tipo, objeto_nombre, cantidad, almacen, timestamp
+        FROM armamento_logs
+        WHERE 1=1
+    """
+
+    params = []
+
+    if usuario:
+        query += " AND username ILIKE %s"
+        params.append(f"%{usuario}%")
+
+    if tipo:
+        query += " AND tipo = %s"
+        params.append(tipo)
+
+    query += " ORDER BY timestamp DESC LIMIT %s OFFSET %s"
+
+    params.append(limit)
+    params.append(offset)
+
+    cur.execute(query, params)
+
+    movimientos = cur.fetchall()
+
+    for m in movimientos:
+        m["fecha"] = datetime.fromtimestamp(m["timestamp"]).strftime("%d/%m %H:%M")
+
+    cur.close()
+    conn.close()
+
     return templates.TemplateResponse(
         "armamento.html",
-        {"request": request, "user": user, "page": "armamento"}
+        {
+            "request": request,
+            "user": user,
+            "movimientos": movimientos,
+            "page": page,
+            "usuario": usuario,
+            "tipo": tipo
+        }
     )
