@@ -1,132 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
 
-<meta charset="UTF-8">
-<title>Panel Operativos</title>
+{% block content %}
 
-<link rel="stylesheet" href="/static/css/dashboard.css">
-
-</head>
-
-<body>
-
-<div class="container">
-
-<!-- HEADER -->
-
-<div class="header">
-
-<div class="header-left">
-
-<img class="logo-img" src="/static/images/logo_td.webp">
-
-<div class="logo-text">
-The Demons
-<span>Panel Operativos</span>
-</div>
-
-</div>
-
-<div class="user">
-
-<img class="avatar"
-src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
-
-<span>{{ user.username }}</span>
-
-</div>
-
-</div>
-
-
-<!-- CARDS -->
+<h1>Dashboard</h1>
 
 <div class="cards">
 
 <div class="card">
-<div class="card-icon">⚖️</div>
-<div class="card-info">
 <div class="card-title">Sanciones</div>
 <div class="card-number">{{ stats.sanciones }}</div>
 </div>
-</div>
 
 <div class="card">
-<div class="card-icon">🚓</div>
-<div class="card-info">
 <div class="card-title">Operativos</div>
 <div class="card-number">{{ stats.operativos }}</div>
 </div>
-</div>
 
 <div class="card">
-<div class="card-icon">📦</div>
-<div class="card-info">
 <div class="card-title">Movimientos</div>
 <div class="card-number">{{ movimientos|length }}</div>
 </div>
-</div>
 
 </div>
 
-
-<!-- ACTIVIDAD -->
-
-<div class="table-container">
-
-<h2>Actividad reciente</h2>
-
-<table>
-
-<thead>
-<tr>
-<th>Usuario</th>
-<th>Acción</th>
-<th>Objeto</th>
-<th>Cantidad</th>
-<th>Almacén</th>
-<th>Hora</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for m in movimientos %}
-
-<tr>
-
-<td class="user-cell">
-{{ m.username }}
-</td>
-
-<td>
-{% if m.tipo == "sacado" %}
-<span class="badge red">Sacado</span>
-{% else %}
-<span class="badge green">Metido</span>
-{% endif %}
-</td>
-
-<td>{{ m.objeto_nombre }}</td>
-
-<td>{{ m.cantidad }}</td>
-
-<td>{{ m.almacen }}</td>
-
-<td class="time">{{ m.fecha }}</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</body>
-</html>
+{% endblock %}

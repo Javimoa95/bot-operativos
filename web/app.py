@@ -143,3 +143,44 @@ async def dashboard(request: Request):
             "ranking": ranking
         }
     )
+
+@app.get("/operativos", response_class=HTMLResponse)
+async def operativos(request: Request):
+
+    user = request.session.get("user")
+
+    if not user:
+        return RedirectResponse("/")
+
+    return templates.TemplateResponse(
+        "operativos.html",
+        {"request": request, "user": user}
+    )
+
+
+@app.get("/sanciones", response_class=HTMLResponse)
+async def sanciones(request: Request):
+
+    user = request.session.get("user")
+
+    if not user:
+        return RedirectResponse("/")
+
+    return templates.TemplateResponse(
+        "sanciones.html",
+        {"request": request, "user": user}
+    )
+
+
+@app.get("/armamento", response_class=HTMLResponse)
+async def armamento(request: Request):
+
+    user = request.session.get("user")
+
+    if not user:
+        return RedirectResponse("/")
+
+    return templates.TemplateResponse(
+        "armamento.html",
+        {"request": request, "user": user}
+    )

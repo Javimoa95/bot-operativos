@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>The Demons Panel</title>
+
+<link rel="stylesheet" href="/static/css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="sidebar-logo">
+
+<img src="/static/images/logo_td.webp">
+
+<span>The Demons</span>
+
+</div>
+
+<a href="/dashboard">Dashboard</a>
+<a href="/operativos">Operativos</a>
+<a href="/sanciones">Sanciones</a>
+<a href="/armamento">Armamento</a>
+
+</div>
+
+
+<!-- CONTENIDO -->
+
+<div class="main">
+
+<div class="topbar">
+
+<div class="topbar-user">
+
+<img src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
+
+<span>{{user.username}}</span>
+
+</div>
+
+</div>
+
+
+<div class="content">
+
+{% block content %}{% endblock %}
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
