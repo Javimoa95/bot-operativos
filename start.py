@@ -1,5 +1,7 @@
 import threading
 import uvicorn
+import os
+
 from bot.main import bot, BOT_TOKEN
 
 
@@ -8,7 +10,8 @@ def run_bot():
 
 
 def run_web():
-    uvicorn.run("web.app:app", host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("web.app:app", host="0.0.0.0", port=port)
 
 
 bot_thread = threading.Thread(target=run_bot)
