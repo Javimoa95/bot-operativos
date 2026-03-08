@@ -35,15 +35,7 @@ body {
 }
 
 .sidebar:hover {
-
-	width: 200px;
-
-}
-
-.sidebar:hover {
-
 	width: 220px;
-
 }
 
 .sidebar-top {
@@ -57,50 +49,15 @@ body {
 }
 
 .sidebar-top img {
-
 	width: 35px;
-
 }
 
-.main {
-
-	margin-left: 70px;
-
-	width: calc(100vw - 70px);
-
-	min-height: 100vh;
-
-	transition: margin-left 0.25s;
-
-}
-
-.sidebar:hover~.main {
-
-	margin-left: 200px;
-
-}
-
-.logo-text {
-
-	opacity: 0;
-	transition: opacity 0.2s;
-
-	white-space: nowrap;
-
-}
-
-.sidebar:hover .logo-text {
-
-	opacity: 1;
-
-}
+/* NAV */
 
 .nav {
-
 	margin-top: 20px;
 	display: flex;
 	flex-direction: column;
-
 }
 
 .nav-item {
@@ -119,24 +76,29 @@ body {
 }
 
 .nav-item:hover {
-
 	background: #1f2937;
-
 }
+
+/* ICONOS SIEMPRE VISIBLES */
+
+.nav-item i {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+}
+
+/* TEXTO OCULTO */
 
 .nav-item span {
-
 	opacity: 0;
 	transition: opacity 0.2s;
-
 	white-space: nowrap;
-
 }
 
+/* TEXTO VISIBLE EN HOVER */
+
 .sidebar:hover .nav-item span {
-
 	opacity: 1;
-
 }
 
 /* MAIN */
@@ -149,10 +111,10 @@ body {
 }
 
 .sidebar:hover~.main {
-
 	margin-left: 220px;
-
+	width: calc(100vw - 220px);
 }
+
 
 /* TOPBAR */
 
@@ -201,6 +163,7 @@ body {
 	max-width: 1200px;
 
 }
+
 /* SIDEBAR COLLAPSE */
 
 .sidebar {
@@ -219,9 +182,6 @@ body {
 	display: none;
 }
 
-.sidebar.collapsed .nav-item {
-	justify-content: center;
-}
 
 .collapse-btn {
 	margin-top: auto;
@@ -555,12 +515,16 @@ body {
 .card-wrapper {
 
 	width: 100%;
-
 	height: 200px;
 
 	max-width: 340px;
 
+	position: relative;
+
+	overflow: hidden;
+
 }
+
 /* COLORES */
 
 .card-wrapper.red {
