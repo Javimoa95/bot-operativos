@@ -140,7 +140,8 @@ async def dashboard(request: Request):
             "user": user,
             "stats": stats,
             "movimientos": movimientos,
-            "ranking": ranking
+            "ranking": ranking,
+            "page": "dashboard"
         }
     )
 
@@ -154,7 +155,7 @@ async def operativos(request: Request):
 
     return templates.TemplateResponse(
         "operativos.html",
-        {"request": request, "user": user}
+        {"request": request, "user": user, "page": "operativos"}
     )
 
 
@@ -168,7 +169,7 @@ async def sanciones(request: Request):
 
     return templates.TemplateResponse(
         "sanciones.html",
-        {"request": request, "user": user}
+        {"request": request, "user": user, "page": "sanciones"}
     )
 
 
@@ -182,5 +183,5 @@ async def armamento(request: Request):
 
     return templates.TemplateResponse(
         "armamento.html",
-        {"request": request, "user": user}
+        {"request": request, "user": user, "page": "armamento"}
     )
