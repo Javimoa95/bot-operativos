@@ -147,6 +147,7 @@ async def dashboard(request: Request):
     ),0) AS total
     FROM armamento_logs
     WHERE user_id = %s
+    AND categoria = 'arma'
     """, (user["id"],))
 
     recuento = cur.fetchone()["total"]

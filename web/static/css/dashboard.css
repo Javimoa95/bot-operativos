@@ -675,12 +675,6 @@ body {
 	height: 100%;
 }
 
-.cards {
-	display: flex;
-	gap: 30px;
-	flex-wrap: wrap;
-}
-
 /* ===== VARIANTES DE COLOR ===== */
 
 .card-red {
@@ -711,4 +705,147 @@ body {
 .card-orange .ray {
 	background: #f59e0b;
 	box-shadow: 0 0 20px #f59e0b;
+}
+
+.cards {
+	display: flex;
+	gap: 30px;
+	margin-top: 30px;
+	flex-wrap: wrap;
+}
+
+.card-wrapper {
+
+	width: 280px;
+	height: 200px;
+
+	border-radius: 12px;
+
+	padding: 1px;
+
+	position: relative;
+
+	background: radial-gradient(circle 230px at 0% 0%, #ffffff20, #0c0d0d);
+
+}
+
+.stat-card {
+
+	width: 100%;
+	height: 100%;
+
+	border-radius: 11px;
+
+	background: radial-gradient(circle 280px at 0% 0%, #1f2937, #020617);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+
+	position: relative;
+
+	color: white;
+
+}
+
+.text {
+
+	font-size: 3.5rem;
+	font-weight: bold;
+
+	background: linear-gradient(45deg, #fff, #aaa, #fff);
+
+	-webkit-background-clip: text;
+	background-clip: text;
+
+	color: transparent;
+
+}
+
+.label {
+	font-size: 1rem;
+	opacity: 0.8;
+}
+
+.dot {
+
+	width: 5px;
+	height: 5px;
+
+	position: absolute;
+
+	background: #fff;
+
+	border-radius: 50%;
+
+	top: 15px;
+	right: 20px;
+
+	animation: moveDot 6s linear infinite;
+
+}
+
+@keyframes moveDot {
+
+	0%,
+	100% {
+		top: 15px;
+		right: 20px;
+	}
+
+	50% {
+		top: 170px;
+		right: 240px;
+	}
+
+}
+
+.ray {
+
+	width: 200px;
+	height: 40px;
+
+	background: white;
+
+	opacity: 0.15;
+
+	filter: blur(10px);
+
+	position: absolute;
+
+	transform: rotate(40deg);
+
+	top: 0;
+	left: 0;
+
+}
+
+.line {
+	position: absolute;
+	background: #2c2c2c;
+}
+
+.topl {
+	top: 10%;
+	height: 1px;
+	width: 100%;
+}
+
+.bottoml {
+	bottom: 10%;
+	height: 1px;
+	width: 100%;
+}
+
+.leftl {
+	left: 10%;
+	width: 1px;
+	height: 100%;
+}
+
+.rightl {
+	right: 10%;
+	width: 1px;
+	height: 100%;
 }
