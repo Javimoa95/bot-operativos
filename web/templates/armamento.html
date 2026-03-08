@@ -2,8 +2,62 @@
 
 {% block content %}
 
-<h1>Control de Armamento</h1>
+<h1>Armamento</h1>
 
-<p>Aquí aparecerán los movimientos de armamento.</p>
+<div class="chart-container">
+
+<h2>Actividad de armamento</h2>
+
+<canvas id="armamentoChart"></canvas>
+
+</div>
 
 {% endblock %}
+
+
+<script>
+
+const ctx = document.getElementById('armamentoChart');
+
+new Chart(ctx, {
+
+type:'line',
+
+data:{
+
+labels:['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
+
+datasets:[{
+
+label:'Movimientos',
+
+data:[5,12,8,10,6,14,7],
+
+borderColor:'#ef4444',
+
+backgroundColor:'rgba(239,68,68,0.2)',
+
+fill:true,
+
+tension:0.4
+
+}]
+
+},
+
+options:{
+
+plugins:{
+legend:{display:false}
+},
+
+scales:{
+x:{grid:{display:false}},
+y:{grid:{color:'#1e293b'}}
+}
+
+}
+
+});
+
+</script>

@@ -263,3 +263,17 @@ transform:translateY(0);
 }
 
 }
+
+.chart-container{
+margin-top:25px;
+background:#1e293b;
+padding:25px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.chart-container h2{
+margin-bottom:15px;
+font-size:16px;
+opacity:0.8;
+}
