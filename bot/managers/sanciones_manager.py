@@ -1,6 +1,6 @@
 import random
 import string
-from database import conectar
+from ..database import conectar
 import discord
 
 CATEGORIA_SANCIONES_ID = 1477345672264159342

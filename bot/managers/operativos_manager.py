@@ -1,4 +1,4 @@
-from database import conectar
+from ..database import conectar
 
 def agregar_operativo(mensaje_id, timestamp, columna):
     conn = conectar()

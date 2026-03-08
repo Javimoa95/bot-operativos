@@ -8,8 +8,8 @@ from discord.ext import commands
 from discord import app_commands
 from datetime import datetime, timedelta
 import pytz
-from database import inicializar_db
-from sheets_manager import (
+from bot.database import inicializar_db
+from bot.managers.sheets_manager import (
     conectar_sheet,
     obtener_o_crear_fila,
     crear_columna_operativo,
@@ -18,7 +18,7 @@ from sheets_manager import (
     borrar_columna_operativo,
     recalcular_totales_global
 )
-from operativos_manager import (
+from bot.managers.operativos_manager import (
     agregar_operativo,
     obtener_operativo,
     borrar_operativo,
