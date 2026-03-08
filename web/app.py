@@ -78,6 +78,28 @@ def obtener_movimientos_recientes():
 
     return movimientos
 
+def obtener_ranking_armamento():
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT username, SUM(cantidad) AS total
+        FROM armamento_logs
+        WHERE tipo = 'sacado'
+        GROUP BY username
+        ORDER BY total DESC
+        LIMIT 10
+    """)
+
+    ranking = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return ranking
+
+
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -109,6 +131,7 @@ async def dashboard(request: Request):
 
     stats = obtener_stats()
     movimientos = obtener_movimientos_recientes()
+    ranking = obtener_ranking_armamento()
 
     return templates.TemplateResponse(
         "dashboard.html",
@@ -116,6 +139,7 @@ async def dashboard(request: Request):
             "request": request,
             "user": user,
             "stats": stats,
-            "movimientos": movimientos
+            "movimientos": movimientos,
+            "ranking": ranking
         }
     )

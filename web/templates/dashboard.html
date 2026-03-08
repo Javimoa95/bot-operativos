@@ -133,7 +133,21 @@ src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
     {% endfor %}
 </table>
 </div>
+<h2>Top uso de armamento</h2>
 
+<table>
+<tr>
+    <th>Usuario</th>
+    <th>Total retirado</th>
+</tr>
+
+{% for r in ranking %}
+<tr>
+    <td>{{ r.username }}</td>
+    <td>{{ r.total }}</td>
+</tr>
+{% endfor %}
+</table>
 </div>
 
 </body>
