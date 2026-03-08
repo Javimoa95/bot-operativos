@@ -1,3 +1,8 @@
+html,
+body {
+	overflow-x: hidden;
+}
+
 body {
 	margin: 0;
 	padding: 0;
@@ -156,26 +161,17 @@ body {
 /* MAIN */
 
 .main {
-
 	margin-left: 70px;
-
 	width: calc(100% - 70px);
-
 	min-height: 100vh;
-
 	display: flex;
 	flex-direction: column;
-
-	transition: .25s;
-
+	transition: margin-left 0.25s, width 0.25s;
 }
 
 .sidebar:hover~.main {
-
 	margin-left: 220px;
-
 	width: calc(100% - 220px);
-
 }
 
 /* TOPBAR */
@@ -189,6 +185,8 @@ body {
 	padding: 16px 30px;
 
 	background: rgba(15, 23, 42, .8);
+	width: 100%;
+	box-sizing: border-box;
 
 	backdrop-filter: blur(12px);
 
@@ -250,41 +248,23 @@ body {
 /* CARDS */
 
 .cards {
-
 	display: grid;
-
 	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-
 	gap: 25px;
-
 	margin-top: 20px;
-
-
+	width: 100%;
 }
-
 
 /* CARD */
 
 .card {
-
 	width: 100%;
-
+	box-sizing: border-box;
 	display: flex;
-
 	align-items: center;
-
 	justify-content: space-between;
-
 	padding: 22px;
-
 	border-radius: 14px;
-
-	transition: .25s;
-
-	cursor: pointer;
-
-	box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
-
 }
 
 .card:hover {
@@ -476,9 +456,6 @@ body {
 	animation: fadePage .35s ease;
 }
 
-.cards {
-	margin-left: 10px;
-}
 
 @keyframes fadePage {
 
