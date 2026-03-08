@@ -190,7 +190,10 @@ body {
 /* CONTENT */
 
 .content {
-	padding: 30px;
+
+	padding: 40px;
+
+	max-width: 1400px;
 	flex: 1;
 }
 
@@ -525,28 +528,31 @@ body {
 }
 
 
-.cards {
 
-	max-width: 1000px;
-
-	margin-top: 40px;
-
-}
 
 
 /* ===== DASHBOARD CARDS ===== */
 
 .cards {
-	display: flex;
+
+	display: grid;
+
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
 	gap: 30px;
-	flex-wrap: wrap;
+
 	margin-top: 40px;
+
+	max-width: 1200px;
+
 }
 
 .card-wrapper {
 
-	width: 280px;
+	width: 100%;
 	height: 200px;
+
+	max-width: 320px;
 
 	border-radius: 12px;
 	padding: 2px;

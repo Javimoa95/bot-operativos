@@ -1,82 +1,74 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="UTF-8" />
-		<title>The Demons Panel</title>
 
-		<link rel="stylesheet" href="/static/css/dashboard.css?v=3" />
-		<script src="https://unpkg.com/lucide@latest"></script>
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-		<link
-			rel="stylesheet"
-			href="https://cdn.datatables.net/1.13.7/css/dataTables.dark.min.css" />
+<head>
+	<meta charset="UTF-8" />
+	<title>The Demons Panel</title>
 
-		<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-	</head>
+	<link rel="stylesheet" href="/static/css/dashboard.css?v=3" />
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.dark.min.css" />
 
-	<body>
-		<div class="layout">
-			<!-- SIDEBAR -->
+	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+</head>
 
-			<div class="sidebar" id="sidebar">
-				<div class="sidebar-top">
-					<img src="/static/images/logo_td.webp" />
-					<span class="logo-text">The Demons</span>
-				</div>
+<body>
+	<div class="layout">
+		<!-- SIDEBAR -->
 
-				<div class="nav">
-					<a
-						class="nav-item {% if page == 'dashboard' %}active{% endif %}"
-						href="/dashboard">
-						<i data-lucide="home"></i>
-						<span>Inicio</span>
-					</a>
-
-					<a
-						class="nav-item {% if page == 'operativos' %}active{% endif %}"
-						href="/operativos">
-						<i data-lucide="shield"></i>
-						<span>Operativos</span>
-					</a>
-
-					<a
-						class="nav-item {% if page == 'sanciones' %}active{% endif %}"
-						href="/sanciones">
-						<i data-lucide="scale"></i>
-						<span>Sanciones</span>
-					</a>
-
-					<a
-						class="nav-item {% if page == 'armamento' %}active{% endif %}"
-						href="/armamento">
-						<i data-lucide="sword"></i>
-						<span>Armamento</span>
-					</a>
-				</div>
-
+		<div class="sidebar" id="sidebar">
+			<div class="sidebar-top">
+				<img src="/static/images/logo_td.webp" />
+				<span class="logo-text">The Demons</span>
 			</div>
 
-			<!-- MAIN -->
+			<div class="nav">
+				<a class="nav-item {% if page == 'dashboard' %}active{% endif %}" href="/dashboard">
+					<i data-lucide="home"></i>
+					<span>Inicio</span>
+				</a>
 
-			<div class="main">
-				<div class="topbar">
-					<div class="title">Panel de Control</div>
+				<a class="nav-item {% if page == 'operativos' %}active{% endif %}" href="/operativos">
+					<i data-lucide="shield"></i>
+					<span>Operativos</span>
+				</a>
 
-					<div class="user">
-						<img
-							src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png" />
-						<span>{{user.username}}</span>
-					</div>
-				</div>
+				<a class="nav-item {% if page == 'sanciones' %}active{% endif %}" href="/sanciones">
+					<i data-lucide="scale"></i>
+					<span>Sanciones</span>
+				</a>
 
-				<div class="content">{% block content %}{% endblock %}</div>
+				<a class="nav-item {% if page == 'armamento' %}active{% endif %}" href="/armamento">
+					<i data-lucide="sword"></i>
+					<span>Armamento</span>
+				</a>
 			</div>
+
 		</div>
 
-		<script>
-			lucide.createIcons();
-		</script>
-	</body>
+		<!-- MAIN -->
+
+		<div class="main">
+			<div class="topbar">
+				<div class="title">Panel de Control</div>
+
+				<div class="user">
+					<img src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png" />
+					<span>{{user.username}}</span>
+				</div>
+			</div>
+
+			<div class="content">{% block content %}{% endblock %}</div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<script>
+		lucide.createIcons();
+	</script>
+</body>
+
 </html>
