@@ -11,6 +11,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from datetime import datetime
+
 
 from bot.database import conectar
 
@@ -53,6 +55,28 @@ def obtener_stats():
     }
 
 
+def obtener_movimientos_recientes():
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT username, tipo, objeto_nombre, cantidad, almacen, timestamp
+        FROM movimientos
+        ORDER BY timestamp DESC
+        LIMIT 20
+    """)
+
+    movimientos = cur.fetchall()
+
+    # convertir timestamp a fecha legible
+    for m in movimientos:
+        m["fecha"] = datetime.fromtimestamp(m["timestamp"]).strftime("%d/%m %H:%M")
+
+    cur.close()
+    conn.close()
+
+    return movimientos
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -82,12 +106,14 @@ async def dashboard(request: Request):
         return RedirectResponse("/")
 
     stats = obtener_stats()
+    movimientos = obtener_movimientos_recientes()
 
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
             "user": user,
-            "stats": stats
+            "stats": stats,
+            "movimientos": movimientos
         }
     )

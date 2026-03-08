@@ -111,6 +111,27 @@ src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
 <div class="card">
 <h3>Armamento</h3>
 <p>Estadísticas de armas.</p>
+<h2>Actividad reciente</h2>
+
+<table>
+    <tr>
+        <th>Usuario</th>
+        <th>Acción</th>
+        <th>Objeto</th>
+        <th>Cantidad</th>
+        <th>Almacén</th>
+    </tr>
+
+    {% for m in movimientos %}
+    <tr>
+        <td>{{ m.username }}</td>
+        <td>{{ m.tipo }}</td>
+        <td>{{ m.objeto_nombre }}</td>
+        <td>{{ m.cantidad }}</td>
+        <td>{{ m.almacen }}</td>
+    </tr>
+    {% endfor %}
+</table>
 </div>
 
 </div>
