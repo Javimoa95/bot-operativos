@@ -38,11 +38,11 @@ def obtener_stats():
     conn = conectar()
     cur = conn.cursor()
 
-    cur.execute("SELECT COUNT(*) FROM sanciones")
-    sanciones = cur.fetchone()["count"]
+    cur.execute("SELECT COUNT(*) AS total FROM sanciones")
+    sanciones = cur.fetchone()["total"]
 
-    cur.execute("SELECT COUNT(*) FROM operativos")
-    operativos = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) AS total FROM operativos")
+    operativos = cur.fetchone()["total"]
 
     cur.close()
     conn.close()
@@ -51,6 +51,7 @@ def obtener_stats():
         "sanciones": sanciones,
         "operativos": operativos
     }
+
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
