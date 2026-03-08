@@ -134,7 +134,25 @@ async def dashboard(request: Request):
     stats = obtener_stats()
     movimientos = obtener_movimientos_recientes()
     ranking = obtener_ranking_armamento()
+    conn = conectar()
+    cur = conn.cursor()
 
+    cur.execute("""
+    SELECT
+    COALESCE(SUM(
+    CASE
+    WHEN tipo='metido' THEN cantidad
+    WHEN tipo='sacado' THEN -cantidad
+    END
+    ),0)
+    FROM armamento_logs
+    WHERE user_id = %s
+    """, (user["id"],))
+
+    recuento = cur.fetchone()[0]
+
+    cur.close()
+    conn.close()
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -143,7 +161,8 @@ async def dashboard(request: Request):
             "stats": stats,
             "movimientos": movimientos,
             "ranking": ranking,
-            "page": "dashboard"
+            "page": "dashboard",
+            "recuento": recuento
         }
     )
 
