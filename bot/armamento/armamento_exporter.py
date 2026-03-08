@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
 import pytz
-from database import conectar
+from ..database import conectar
 
 CANAL_EXPORTES_ARMAMENTO_ID = 1343251332152168579
 

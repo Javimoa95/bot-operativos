@@ -1,6 +1,6 @@
 import psycopg2
 
-from database import conectar
+from ..database import conectar
 
 def insertar_log(data):
 
