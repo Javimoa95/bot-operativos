@@ -5,7 +5,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-from web.oauth import get_login_url, exchange_code, get_user
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -15,7 +14,7 @@ from datetime import datetime
 import io
 import pandas as pd
 from fastapi.responses import StreamingResponse
-from web.oauth import get_user_roles
+from web.oauth import get_login_url, exchange_code, get_user
 
 from bot.database import conectar
 from bot.main import obtener_roles_usuario
@@ -135,7 +134,6 @@ async def callback(request: Request, code: str):
     request.session["roles"] = roles
 
     return RedirectResponse("/dashboard")
-
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
 
