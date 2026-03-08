@@ -392,7 +392,7 @@ async def revisar_operativos():
                 if str(member.id) in asistentes:
                     continue
 
-                from sanciones_manager import (
+                from bot.managers.sanciones_manager import (
                     crear_sancion,
                     crear_canal_sancion,
                     actualizar_canal_sancion
@@ -609,7 +609,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    from sanciones_manager import (
+    from bot.managers.sanciones_manager import (
         obtener_sancion_por_canal,
         actualizar_contador_mensaje
     )
