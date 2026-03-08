@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 from web.oauth import get_user_roles
 
 from bot.database import conectar
+from bot.main import obtener_roles_usuario
 
 ROL_OPERATIVOS = "1345432524314251306";
 ROL_SANCIONES = "1346520439433728060";
@@ -126,7 +127,8 @@ async def callback(request: Request, code: str):
 
     user = get_user(access_token)
 
-    roles = get_user_roles(access_token)
+    roles = obtener_roles_usuario(user["id"])
+
     print("ROLES USUARIO:", roles)
 
     request.session["user"] = user

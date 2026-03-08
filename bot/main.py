@@ -602,7 +602,19 @@ async def borrarop(interaction: discord.Interaction, link: str):
             "⚠ No se encontró operativo.",
             ephemeral=True
         )
+def obtener_roles_usuario(user_id):
 
+    guild = bot.get_guild(int(GUILD_ID))
+
+    if not guild:
+        return []
+
+    member = guild.get_member(int(user_id))
+
+    if not member:
+        return []
+
+    return [str(role.id) for role in member.roles]
 @bot.event
 async def on_message(message):
 

@@ -19,24 +19,6 @@ def get_login_url():
         f"&scope=identify guilds guilds.members.read"
     )
 
-def get_user_roles(access_token):
-
-    url = f"https://discord.com/api/users/@me/guilds/{GUILD_ID}/member"
-
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
-    r = requests.get(url, headers=headers)
-
-    if r.status_code != 200:
-        return []
-
-    data = r.json()
-
-    return data.get("roles", [])
-
-
 def exchange_code(code):
 
     data = {
