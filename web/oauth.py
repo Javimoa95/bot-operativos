@@ -16,7 +16,7 @@ def get_login_url():
         f"?client_id={CLIENT_ID}"
         f"&redirect_uri={REDIRECT_URI}"
         f"&response_type=code"
-        f"&scope=identify guilds"
+        f"&scope=identify guilds guilds.members.read"
     )
 
 def get_user_roles(access_token):
@@ -34,7 +34,9 @@ def get_user_roles(access_token):
 
     data = r.json()
 
-    return data["roles"]
+    return data.get("roles", [])
+
+
 def exchange_code(code):
 
     data = {

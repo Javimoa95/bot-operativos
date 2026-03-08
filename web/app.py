@@ -19,9 +19,10 @@ from web.oauth import get_user_roles
 
 from bot.database import conectar
 
-ROL_OPERATIVOS = "1345432524314251306"
-ROL_SANCIONES = "1346520439433728060"
-ROL_ARMAMENTO = "1256650238832148520"
+ROL_OPERATIVOS = "1345432524314251306";
+ROL_SANCIONES = "1346520439433728060";
+ROL_ARMAMENTO = "1256650238832148520";
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
@@ -125,16 +126,12 @@ async def callback(request: Request, code: str):
 
     user = get_user(access_token)
 
-    request.session["user"] = user
-    token_data = exchange_code(code)
-    access_token = token_data["access_token"]
-
-    user = get_user(access_token)
-
     roles = get_user_roles(access_token)
+    print("ROLES USUARIO:", roles)
 
     request.session["user"] = user
     request.session["roles"] = roles
+
     return RedirectResponse("/dashboard")
 
 @app.get("/dashboard", response_class=HTMLResponse)
