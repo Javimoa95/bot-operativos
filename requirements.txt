@@ -4,3 +4,11 @@ oauth2client
 pytz
 watchfiles
 psycopg2-binary
+fastapi
+uvicorn
+jinja2
+python-multipart
+requests
+authlib
+python-dotenv
+itsdangerous

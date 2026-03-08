@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0a0f2c;
+    color:white;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:250px;
+    height:100vh;
+    background:#070b1e;
+    position:fixed;
+    padding:20px;
+}
+
+.sidebar h2{
+    color:#ffd500;
+}
+
+.menu{
+    margin-top:30px;
+}
+
+.menu a{
+    display:block;
+    padding:12px;
+    text-decoration:none;
+    color:white;
+}
+
+.menu a:hover{
+    background:#11184a;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    padding:40px;
+}
+
+.card{
+    background:#11184a;
+    padding:25px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.avatar{
+    width:40px;
+    border-radius:50%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>The Demons</h2>
+
+<div class="menu">
+<a href="#">Dashboard</a>
+<a href="#">Sanciones</a>
+<a href="#">Operativos</a>
+<a href="#">Armamento</a>
+<a href="#">Comandos</a>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="user">
+
+<img class="avatar"
+src="https://cdn.discordapp.com/avatars/{{user.id}}/{{user.avatar}}.png">
+
+<h3>{{user.username}}</h3>
+
+</div>
+
+<div class="card">
+<h3>Operativos registrados</h3>
+<p>{{stats.operativos}}</p>
+</div>
+
+<div class="card">
+<h3>Sanciones registradas</h3>
+<p>{{stats.sanciones}}</p>
+</div>
+
+<div class="card">
+<h3>Armamento</h3>
+<p>Estadísticas de armas.</p>
+</div>
+
+</div>
+
+</body>
+</html>
