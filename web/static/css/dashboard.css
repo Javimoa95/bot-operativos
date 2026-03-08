@@ -122,10 +122,9 @@ cursor:pointer;
 }
 
 .card:hover{
-transform:translateY(-6px) scale(1.02);
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
+transform:translateY(-6px) scale(1.03);
+box-shadow:0 15px 40px rgba(0,0,0,0.45);
 }
-
 .card-icon{
 font-size:32px;
 }
@@ -152,4 +151,68 @@ background:linear-gradient(135deg,#7c3aed,#4c1d95);
 
 .card-red{
 background:linear-gradient(135deg,#dc2626,#7f1d1d);
+}
+
+/* SIDEBAR COLLAPSE */
+
+.sidebar{
+transition:0.3s;
+}
+
+.sidebar.collapsed{
+width:70px;
+}
+
+.sidebar.collapsed span{
+display:none;
+}
+
+.sidebar.collapsed .logo-text{
+display:none;
+}
+
+.sidebar.collapsed .nav-item{
+justify-content:center;
+}
+
+.collapse-btn{
+margin-top:auto;
+background:#1e293b;
+border:none;
+color:white;
+padding:8px;
+border-radius:8px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.collapse-btn:hover{
+background:#334155;
+}
+
+/* ICONOS */
+
+.nav-item i{
+width:20px;
+height:20px;
+}
+
+/* ANIMACIÓN DE PÁGINA */
+
+.content{
+animation:fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
 }

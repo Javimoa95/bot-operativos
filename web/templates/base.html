@@ -8,47 +8,52 @@
 <title>The Demons Panel</title>
 
 <link rel="stylesheet" href="/static/css/dashboard.css">
-
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
 
-<div class="layout">
-
-<!-- SIDEBAR -->
-
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
 
 <div class="sidebar-top">
 
 <img src="/static/images/logo_td.webp">
 
-<span>The Demons</span>
+<span class="logo-text">The Demons</span>
 
 </div>
 
 <div class="nav">
 
 <a class="nav-item" href="/dashboard">
-<span>🏠</span> Inicio
+<i data-lucide="home"></i>
+<span>Inicio</span>
 </a>
 
 <a class="nav-item" href="/operativos">
-<span>🚓</span> Operativos
+<i data-lucide="shield"></i>
+<span>Operativos</span>
 </a>
 
 <a class="nav-item" href="/sanciones">
-<span>⚖️</span> Sanciones
+<i data-lucide="scale"></i>
+<span>Sanciones</span>
 </a>
 
 <a class="nav-item" href="/armamento">
-<span>🔫</span> Armamento
+<i data-lucide="sword"></i>
+<span>Armamento</span>
 </a>
 
 </div>
 
-</div>
+<button class="collapse-btn" onclick="toggleSidebar()">
 
+<i data-lucide="chevrons-left"></i>
+
+</button>
+
+</div>
 
 <!-- MAIN -->
 
