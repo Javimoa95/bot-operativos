@@ -20,6 +20,18 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
 app.add_middleware(SessionMiddleware, secret_key="supersecretkey")
 templates = Jinja2Templates(directory="web/templates")
+import threading
+from bot.main import bot, BOT_TOKEN
+
+def start_bot():
+    bot.run(BOT_TOKEN)
+
+@app.on_event("startup")
+def startup_event():
+    thread = threading.Thread(target=start_bot)
+    thread.daemon = True
+    thread.start()
+
 
 def obtener_stats():
 

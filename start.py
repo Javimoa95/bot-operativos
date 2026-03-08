@@ -5,21 +5,19 @@ import os
 from bot.main import bot, BOT_TOKEN
 
 
-def run_bot():
+def start_bot():
     bot.run(BOT_TOKEN)
 
 
-# lanzar bot en segundo plano
-bot_thread = threading.Thread(target=run_bot)
-bot_thread.start()
+if __name__ == "__main__":
+    print("🚀 START.PY EJECUTÁNDOSE")
 
-# puerto que Railway asigna automáticamente
-port = int(os.environ.get("PORT", 8000))
+    threading.Thread(target=start_bot, daemon=True).start()
 
-# arrancar servidor web
-uvicorn.run(
-    "web.app:app",
-    host="0.0.0.0",
-    port=port,
-    log_level="info"
-)
+    port = int(os.environ.get("PORT", 8000))
+
+    uvicorn.run(
+        "web.app:app",
+        host="0.0.0.0",
+        port=port
+    )
