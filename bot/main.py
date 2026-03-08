@@ -50,12 +50,12 @@ async def load_cogs():
     # Cargar cogs normales
     for file in os.listdir("bot/cogs"):
         if file.endswith(".py"):
-            await bot.load_extension(f"cogs.{file[:-3]}")
+            await bot.load_extension(f"bot.cogs.{file[:-3]}")
 
     # Cargar cogs de armamento
     for file in os.listdir("bot/armamento"):
         if file.endswith(".py") and file.endswith("_cog.py"):
-            await bot.load_extension(f"armamento.{file[:-3]}")
+            await bot.load_extension(f"bot.armamento.{file[:-3]}")
 
 
 async def log_justificacion(interaction, operativo_id, motivo):
