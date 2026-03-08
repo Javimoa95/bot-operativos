@@ -4,64 +4,25 @@
 
 <div class="cards">
 
-    <!-- SANCIONES -->
-    <div class="card-wrapper red">
-        <div class="dot"></div>
-
-        <div class="stat-card">
-
-            <div class="ray"></div>
-
-            <div class="text">{{ stats.sanciones }}</div>
-            <div class="label">Sanciones</div>
-
-            <div class="line topl"></div>
-            <div class="line leftl"></div>
-            <div class="line bottoml"></div>
-            <div class="line rightl"></div>
-
-        </div>
-    </div>
-
-
-    <!-- OPERATIVOS -->
-    <div class="card-wrapper blue">
-        <div class="dot"></div>
-
-        <div class="stat-card">
-
-            <div class="ray"></div>
-
-            <div class="text">{{ stats.operativos }}</div>
-            <div class="label">Operativos</div>
-
-            <div class="line topl"></div>
-            <div class="line leftl"></div>
-            <div class="line bottoml"></div>
-            <div class="line rightl"></div>
-
-        </div>
-    </div>
-
-
-    <!-- RECUENTO -->
-    <div class="card-wrapper orange">
-        <div class="dot"></div>
-
-        <div class="stat-card">
-
-            <div class="ray"></div>
-
-            <div class="text">{{ recuento }}</div>
-            <div class="label">Tu recuento</div>
-
-            <div class="line topl"></div>
-            <div class="line leftl"></div>
-            <div class="line bottoml"></div>
-            <div class="line rightl"></div>
-
-        </div>
-    </div>
-
+<div class="card card-red">
+<div>
+<div class="card-title">Sanciones</div>
+<div class="card-number">{{ stats.sanciones }}</div>
 </div>
-{% endblock %}
+</div>
+
+<div class="card card-blue">
+<div>
+<div class="card-title">Operativos</div>
+<div class="card-number">{{ stats.operativos }}</div>
+</div>
+</div>
+
+<div class="card card-orange">
+<div>
+<div class="card-title">Tu recuento</div>
+<div class="card-number">{{ recuento }}</div>
+</div>
+</div>
+
+</div>{% endblock %}
