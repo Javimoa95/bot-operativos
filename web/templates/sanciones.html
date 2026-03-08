@@ -1,9 +1,37 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
 <h1>Sanciones</h1>
 
-<p>Aquí aparecerán las sanciones.</p>
+<table class="data-table" id="tablaSanciones">
+	<tr>
+		<th>ID</th>
+		<th>Usuario</th>
+		<th>Motivo</th>
+		<th>Tipo</th>
+		<th>Fecha</th>
+	</tr>
+
+	{% for s in sanciones %}
+
+	<tr>
+		<td>{{s.id}}</td>
+
+		<td>{{s.usuario}}</td>
+
+		<td>{{s.motivo}}</td>
+
+		<td>
+			{% if s.tipo == "grave" %}
+			<span class="badge red">Grave</span>
+			{% else %}
+			<span class="badge yellow">Leve</span>
+			{% endif %}
+		</td>
+
+		<td>{{s.fecha}}</td>
+	</tr>
+
+	{% endfor %}
+</table>
 
 {% endblock %}

@@ -155,11 +155,28 @@ async def operativos(request: Request):
     if not user:
         return RedirectResponse("/")
 
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT id, fecha, max_asistentes, cerrado
+        FROM operativos
+        ORDER BY fecha DESC
+    """)
+
+    operativos = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
     return templates.TemplateResponse(
         "operativos.html",
-        {"request": request, "user": user, "page": "operativos"}
+        {
+            "request": request,
+            "user": user,
+            "operativos": operativos
+        }
     )
-
 
 @app.get("/sanciones", response_class=HTMLResponse)
 async def sanciones(request: Request):
@@ -169,11 +186,28 @@ async def sanciones(request: Request):
     if not user:
         return RedirectResponse("/")
 
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT id, usuario, motivo, tipo, fecha
+        FROM sanciones
+        ORDER BY fecha DESC
+    """)
+
+    sanciones = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
     return templates.TemplateResponse(
         "sanciones.html",
-        {"request": request, "user": user, "page": "sanciones"}
+        {
+            "request": request,
+            "user": user,
+            "sanciones": sanciones
+        }
     )
-
 
 @app.get("/armamento", response_class=HTMLResponse)
 async def armamento(request: Request, page: int = 1, usuario: str = "", tipo: str = ""):

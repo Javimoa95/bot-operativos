@@ -441,3 +441,23 @@ transition:0.2s;
 transform:translateY(-2px);
 box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
+
+.badge{
+padding:4px 10px;
+border-radius:6px;
+font-size:12px;
+font-weight:600;
+}
+
+.badge.red{
+background:#ef4444;
+}
+
+.badge.green{
+background:#22c55e;
+}
+
+.badge.yellow{
+background:#eab308;
+color:black;
+}

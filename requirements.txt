@@ -13,3 +13,4 @@ authlib
 python-dotenv
 itsdangerous
 pandas
+xlsxwriter

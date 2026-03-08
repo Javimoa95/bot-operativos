@@ -1,9 +1,34 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
 <h1>Operativos</h1>
 
-<p>Aquí aparecerán los operativos registrados.</p>
+<table class="data-table">
+	<tr>
+		<th>ID</th>
+		<th>Fecha</th>
+		<th>Máx asistentes</th>
+		<th>Estado</th>
+	</tr>
+
+	{% for o in operativos %}
+
+	<tr>
+		<td>{{o.id}}</td>
+
+		<td>{{o.fecha}}</td>
+
+		<td>{{o.max_asistentes}}</td>
+
+		<td>
+			{% if o.cerrado %}
+			<span class="badge red">Cerrado</span>
+			{% else %}
+			<span class="badge green">Activo</span>
+			{% endif %}
+		</td>
+	</tr>
+
+	{% endfor %}
+</table>
 
 {% endblock %}
